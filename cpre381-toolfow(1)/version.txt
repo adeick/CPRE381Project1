@@ -1,0 +1,16 @@
+
+Version sp2021.0
+
+Release Date: 3/4/2021
+
+Release Notes:
+
+* Added Configuration File to allow for custom installs.
+* Added GUI implementation for Testing Framework
+* Added Ability to run multiple assembly files in one selection
+
+Known Bugs:
+
+*Pipelined Processor Simulation
+*GUI Freezes during Simulation (Becomes unresponsive)
+

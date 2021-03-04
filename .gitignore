@@ -1,0 +1,4 @@
+# Ignore BAK
+*.bak
+Ignore everything in a work folder
+*/work/*

@@ -76,6 +76,17 @@ architecture structure of MIPS_Processor is
 
   -- TODO: You may add any additional signals or components your implementation 
   --       requires below this comment
+  component MIPS_register_file is
+  port(i_RST         : in std_logic;
+       i_CLK         : in std_logic;
+       i_rd          : in std_logic_vector(4 downto 0); -- write port
+       i_rs          : in std_logic_vector(4 downto 0); -- read port 1
+       i_rt          : in std_logic_vector(4 downto 0); -- read port 2
+       i_rdData      : in std_logic_vector(31 downto 0);-- write port data
+       o_rsData      : out std_logic_vector(31 downto 0);-- read port 1 data
+       o_rtData      : out std_logic_vector(31 downto 0));-- read port 2 data
+  end component;
+
   component mux2t1_N is
     generic(N : integer := 16); -- Generic of type integer for input/output data width. Default value is 32.
     port(i_S          : in std_logic;
@@ -111,15 +122,25 @@ begin
              q    => s_DMemOut);
 
   --RegFile: --
+  regFile: MIPS_register_file 
+  port map(i_RST     => s_ ,
+       i_CLK         => s_ ,
+       i_rd          => s_RegWrAddr,
+       i_rs          => s_ ,
+       i_rt          => s_ ,
+       i_rdData      => s_RegWrData, 
+       o_rsData      => s_ , 
+       o_rtData      => s_ );
+ -- s_RegWr
 
   --AddSub: --
 
   immediateMux: mux2t1_N
   generic map(32 => N) -- Generic of type integer for input/output data width. Default value is 32.
-  port map(i_S      : s_ALUSrc,
-       i_D0         : s_RegReadData2,
-       i_D1         : s_imm32,
-       o_O          : s_immMuxOut);
+  port map(i_S   => s_ALUSrc,
+       i_D0      => s_RegReadData2,
+       i_D1      => s_imm32,
+       o_O       => s_immMuxOut);
   --SignExtender
 
   

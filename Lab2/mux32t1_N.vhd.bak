@@ -1,0 +1,85 @@
+-------------------------------------------------------------------------
+-- John Brose
+-------------------------------------------------------------------------
+
+
+-- mux32t1_N.vhd
+-------------------------------------------------------------------------
+-- DESCRIPTION: This file contains an implementation of a N bit bus 
+-- 32-input mux 
+--
+--
+-- NOTES:
+-- 2/18/21 by JB::Design created.
+-------------------------------------------------------------------------
+-- library declaration
+library IEEE;
+use IEEE.std_logic_1164.all;
+-- entity
+package STD_LOGIC_MATRIX is
+	type std_logic_matrix is array (integer range <>) of std_logic_vector(31 downto 0);
+end package;
+use work.STD_LOGIC_MATRIX.all;
+
+library IEEE;
+use IEEE.std_logic_1164.all;
+
+entity mux32t1_N is
+  --generic(N : integer := 32); -- Generic of type integer for input/output data width. Default value is 32.
+  port(i_S          : in std_logic_vector(4 downto 0);
+       i_D          : in std_logic_matrix(31 downto 0);
+       o_O          : out std_logic_vector(31 downto 0));
+end mux32t1_N;
+
+-- architecture
+architecture structural of mux32t1_N is
+
+  component mux32t1 is
+	port(i_D    	  : in std_logic_vector(31 downto 0);
+	     i_S	  : in std_logic_vector(4 downto 0);
+	     o_O	  : out std_logic);
+  end component;
+
+begin
+
+  -- Instantiate N dff instances.
+  G_NBit_MUX32t1: for i in 0 to 31 generate
+    MUX32t1_N: mux32t1 port map(
+	      i_S	=> i_S,   
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+	      i_D(0)	=> i_D(0)(i),
+
+              o_O       => o_O(i));
+  end generate G_NBit_MUX32t1;
+  
+end structural;

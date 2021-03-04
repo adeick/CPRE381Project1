@@ -53,6 +53,16 @@ architecture structure of MIPS_Processor is
   -- Required overflow signal -- for overflow exception detection
   signal s_Ovfl         : std_logic;  -- TODO: this signal indicates an overflow exception would have been initiated
 
+-- Added Control Signals
+  signal s_ALUSrc    : std_logic; -- TODO: use this signal as the final data memory data input
+
+--Added Signals  
+  signal s_RegReadData1 : std_logic_vector(N-1 downto 0); 
+  signal s_RegReadData2 : std_logic_vector(N-1 downto 0);
+  signal s_imm32 : std_logic_vector(31 downto 0);
+  signal s_imm16 : std_logic_vector(15 downto 0); 
+  signal s_immMuxOut : std_logic_vector(N-1 downto 0); --Output of Immediate Mux
+
   component mem is
     generic(ADDR_WIDTH : integer;
             DATA_WIDTH : integer);
@@ -66,6 +76,13 @@ architecture structure of MIPS_Processor is
 
   -- TODO: You may add any additional signals or components your implementation 
   --       requires below this comment
+  component mux2t1_N is
+    generic(N : integer := 16); -- Generic of type integer for input/output data width. Default value is 32.
+    port(i_S          : in std_logic;
+       i_D0         : in std_logic_vector(N-1 downto 0);
+       i_D1         : in std_logic_vector(N-1 downto 0);
+       o_O          : out std_logic_vector(N-1 downto 0));
+end component;
 
 begin
 
@@ -93,6 +110,19 @@ begin
              we   => s_DMemWr,
              q    => s_DMemOut);
 
+  --RegFile: --
+
+  --AddSub: --
+
+  immediateMux: mux2t1_N
+  generic map(32 => N) -- Generic of type integer for input/output data width. Default value is 32.
+  port map(i_S      : s_ALUSrc,
+       i_D0         : s_RegReadData2,
+       i_D1         : s_imm32,
+       o_O          : s_immMuxOut);
+  --SignExtender
+
+  
   -- TODO: Ensure that s_Halt is connected to an output control signal produced from decoding the Halt instruction (Opcode: 01 0100)
   -- TODO: Ensure that s_Ovfl is connected to the overflow output of your ALU
 

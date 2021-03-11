@@ -53,22 +53,34 @@ architecture structure of MIPS_Processor is
   -- Required overflow signal -- for overflow exception detection
   signal s_Ovfl         : std_logic;  -- TODO: this signal indicates an overflow exception would have been initiated
 
--- Added Control Signals
-  signal s_ALUSrc    : std_logic; -- TODO: use this signal as the final data memory data input
 
 --Added Signals  
   signal s_RegOutReadData1 : std_logic_vector(N-1 downto 0);
     --Data2 is named s_DMemData
   signal s_RegInReadData1,    s_RegInReadData2,            s_RegD: std_logic_vector(4 downto 0);
+  signal s_shamt: std_logic_vector(4 downto 0);
+
   --rs(instructions [25-21]), rt(instructions [20-16]),     rd (instructions [15-11])
   signal s_imm32 : std_logic_vector(31 downto 0);
   signal s_imm16 : std_logic_vector(15 downto 0); 
   signal s_immMuxOut : std_logic_vector(N-1 downto 0); --Output of Immediate Mux
 
   signal s_opCode   : std_logic_vector(5 downto 0);--instruction bits[31-26] 
-  signal s_ALUOp    : std_logic_vector(5 downto 0);--instruction bits[31-26]
   signal s_funcCode : std_logic_vector(5 downto 0);--instruction bits[5-0]
-  signal s_ALUCtrl  : std_logic_vector(11 downto 0);--Routes from ALU control to ALU
+  
+  
+  signal s_Ctrl  : std_logic_vector(11 downto 0);--Routes from ALU control to ALU
+--Control Signals
+signal s_ALUSrc    : std_logic; -- TODO: use this signal as the final data memory data input
+signal s_ALUOp     : std_logic_vector(3 downto 0); --ALU Code
+signal s_MemtoReg    : std_logic; -- TODO: use this signal as the final data memory data input
+signal s_MemWrite    : std_logic; -- TODO: use this signal as the final data memory data input
+signal s_RegWrite    : std_logic; -- TODO: use this signal as the final data memory data input
+signal s_RegDst       : std_logic; -- TODO: use this signal as the final data memory data input
+signal s_PCSrc        : std_logic; -- TODO: use this signal as the final data memory data input
+signal s_SignExt     : std_logic; -- TODO: use this signal as the final data memory data input
+signal s_jump     : std_logic; -- TODO: use this signal as the final data memory data input
+
 
   component mem is
     generic(ADDR_WIDTH : integer;
@@ -154,6 +166,9 @@ begin
 		for i in 0 to 5 loop --Control not Implemented Yet
 			s_funcCode(i) <= s_Inst(i); --bits[5-0] into ALU Control 
 		end loop;
+    for i in 6 to 10 loop --Shifter not Implemented Yet
+			s_shamt(i-6) <= s_Inst(i); --bits[1--6] into Barrel Shifter 
+		end loop;
     for i in 11 to 15 loop
 			s_regD(i-11) <= s_Inst(i); --bits[11-15] into RegDstMux bits[4-0]
 		end loop;
@@ -165,9 +180,19 @@ begin
 		end loop;
     for i in 26 to 31 loop 
 			s_opCode(i-26) <= s_Inst(i); --bits[26-31] into Control Brick (bits[5-0])
-      s_ALUOp(i-26)  <= s_Inst(i); --bits[26-31] into Control Brick (bits[5-0])
       --TODO Adjust this once Control Brick is implemented, opCode should change ALUOp
 		end loop;
+    s_ALUSrc <= s_Ctrl(0);
+    for i in 1 to 4 loop
+			s_ALUOp(i-1) <= s_Ctrl(i); --bits[15-0] into Sign Extender
+		end loop;
+    s_MemtoReg <= s_Ctrl(6);
+    s_MemWrite <= s_Ctrl(5);
+    s_RegWrite <= s_Ctrl(7);
+    s_RegDst   <= s_Ctrl(8);
+    s_PCSrc    <= s_Ctrl(9);
+    s_SignExt  <= s_Ctrl(10);
+    s_jump     <= s_Ctrl(11);
 	end process;
 
   --RegFile: --
@@ -206,7 +231,7 @@ begin
   aluControl: control_unit
   port map(i_opcode  	=> s_opCode, --in std_logic_vector(5 downto 0);
           i_funct	  	=> s_funcCode, --in std_logic_vector(5 downto 0);
-          o_Ctrl_Unt	=> s_ALUCtrl); --out std_logic_vector(11 downto 0));
+          o_Ctrl_Unt	=> s_Ctrl); --out std_logic_vector(11 downto 0));
         
   
   -- TODO: Ensure that s_Halt is connected to an output control signal produced from decoding the Halt instruction (Opcode: 01 0100)

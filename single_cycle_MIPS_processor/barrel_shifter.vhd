@@ -29,40 +29,23 @@ end barrel_shifter;
 -- architecture
 architecture dataflow of barrel_shifter is
 
-signal s_RTYPE : std_logic_vector(11 downto 0);
+  component mux2t1_N is
+  generic(N : integer := 16); -- Generic of type integer for input/output data width. Default value is 32.
+  port(i_S          : in std_logic;
+       i_D0         : in std_logic_vector(N-1 downto 0);
+       i_D1         : in std_logic_vector(N-1 downto 0);
+       o_O          : out std_logic_vector(N-1 downto 0));
+  end component;
+
+  signal buf : std_logic_vector(31 downto 0);
 
 begin
-
-
-with i_funct select s_RTYPE <=
-    "011010011010"  when "100000", -- add
-    "000000011010"  when "100001", -- addu
-    "000100011010"  when "100100", -- and
-    "001010011010"  when "100111", -- nor
-    "001000011010"  when "100110", -- xor
-    "000110011010"  when "100101", -- or
-    "001110011010"  when "101010", -- slt
-    "010000011010"  when "000000", -- sll
-    "010010011000"  when "000010", -- srl
-    "010100011010"  when "000011", -- sra
-    "011100011010"  when "100010", -- sub
-    "000010011010"  when "100011", -- subu
-    "000000000000"  when others;
-
-with i_opcode select o_Ctrl_Unt <=
-    s_RTYPE  	    when "000000", -- RTYPE
-    "111010010010"  when "001000", -- addi
-    "100000010010"  when "001001", -- addiu
-    "100100010000"  when "001100", -- andi
-    "101000010000"  when "001110", -- xori
-    "100110010000"  when "001101", -- ori
-    "101110010010"  when "001010", -- slti
-    "101100010010"  when "001111", -- lui
-    "110110000110"  when "000100", -- beq
-    "111000000110"  when "000101", -- bne
-    "100001010010"  when "100011", -- lw
-    "100000100010"  when "101011", -- sw
-    "000000000011"  when "000010", -- j
-    "000000000000"  when others;
+  buf <= 
+  x1: mux2t1_N
+	generic map(N=>32)
+	port map(i_S  => i_shamt(0),
+		 i_D0 => i_data,
+		 i_D1 => ,
+		 o_O  => );
 
 end dataflow;

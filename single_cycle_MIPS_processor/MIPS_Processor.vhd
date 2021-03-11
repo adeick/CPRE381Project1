@@ -89,6 +89,12 @@ architecture structure of MIPS_Processor is
       o_d2        : out std_logic_vector(31 downto 0)); --Output Data 2
   end component; --Andrew's component
 
+  component extender is
+  port(i_I          : in std_logic_vector(15 downto 0);     -- Data value input
+	     i_C		      : in std_logic; --0 for zero, 1 for signextension
+       o_O          : out std_logic_vector(31 downto 0));   -- Data value output
+  end component; --Andrew's component
+
   component mux2t1_N is
     generic(N : integer := 16); -- Generic of type integer for input/output data width. Default value is 32.
     port(i_S          : in std_logic;
@@ -150,7 +156,11 @@ begin
        i_D0      => s_RegInReadData2, --rt is taking the place of rd
        i_D1      => s_RegD, --rd
        o_O       => s_RegWrData);
-  --SignExtender
+
+  signExtender: extender
+  port map( i_I     => s_imm16, --in std_logic_vector(15 downto 0);     -- Data value input
+	          i_C			=> '1', --in std_logic; --0 for zero, 1 for sign-extension
+            o_O     => s_imm32, --out std_logic_vector(31 downto 0));   -- Data value output);
 
   
   -- TODO: Ensure that s_Halt is connected to an output control signal produced from decoding the Halt instruction (Opcode: 01 0100)

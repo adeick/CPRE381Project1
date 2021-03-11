@@ -81,7 +81,8 @@ signal s_PCSrc        : std_logic; -- TODO: use this signal as the final data me
 signal s_SignExt     : std_logic; -- TODO: use this signal as the final data memory data input
 signal s_jump     : std_logic; -- TODO: use this signal as the final data memory data input
 
-
+signal s_InstAddrPlusFour: std_logic_vector(N-1 downto 0);
+signal s1 : std_logic; --don't care output from adder
   component mem is
     generic(ADDR_WIDTH : integer;
             DATA_WIDTH : integer);
@@ -126,6 +127,15 @@ signal s_jump     : std_logic; -- TODO: use this signal as the final data memory
        i_D1         : in std_logic_vector(N-1 downto 0);
        o_O          : out std_logic_vector(N-1 downto 0));
 end component;
+
+  component addersubtractor is
+    generic(N : integer := 32); -- Generic of type integer for input/output data width. Default value is 32.
+    port( nAdd_Sub: in std_logic;
+	        i_A 	  : in std_logic_vector(N-1 downto 0);
+		      i_B		  : in std_logic_vector(N-1 downto 0);
+		      o_Y		  : out std_logic_vector(N-1 downto 0);
+		      o_Cout	: out std_logic);
+  end component;
 
 begin
 
@@ -232,7 +242,15 @@ begin
   port map(i_opcode  	=> s_opCode, --in std_logic_vector(5 downto 0);
           i_funct	  	=> s_funcCode, --in std_logic_vector(5 downto 0);
           o_Ctrl_Unt	=> s_Ctrl); --out std_logic_vector(11 downto 0));
-        
+  
+  instructionAdder: addersubtractor
+  generic map(32 => N)
+  port map( nAdd_Sub => '0',--in std_logic;
+            i_A 	   => s_IMemAddr,--in std_logic_vector(N-1 downto 0);
+            i_B		   => x"00000004",--in std_logic_vector(N-1 downto 0);
+            o_Y		   => s_InstAddrPlusFour,--out std_logic_vector(N-1 downto 0);
+            o_Cout	 => s1);--out std_logic);
+  
   
   -- TODO: Ensure that s_Halt is connected to an output control signal produced from decoding the Halt instruction (Opcode: 01 0100)
   -- TODO: Ensure that s_Ovfl is connected to the overflow output of your ALU

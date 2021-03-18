@@ -30,6 +30,8 @@ end alu;
 architecture mixed of alu is
 
 signal s_RTYPE : std_logic_vector(11 downto 0);
+signal adderOutput : std_logic_vector(31 downto 0);
+signal s_RTYPE : std_logic_vector(31 downto 0);
 
 -- TODO: Replace With Actual Barrel Shifter
 component barrelshifter is
@@ -38,6 +40,15 @@ component barrelshifter is
 	     i_shft_dir	  	: in std_logic; -- 0 left, 1 right
 	     i_shft_type	: in std_logic; -- 0 logical, 1 arithmetic
 	     o_data     	: out std_logic_vector(31 downto 0));
+    end component;
+
+component addersubtractor is
+    generic(N : integer := 32); -- Generic of type integer for input/output data width. Default value is 32.
+    port( nAdd_Sub: in std_logic;
+            i_A 	  : in std_logic_vector(N-1 downto 0);
+                i_B		  : in std_logic_vector(N-1 downto 0);
+                o_Y		  : out std_logic_vector(N-1 downto 0);
+                o_Cout	: out std_logic);
     end component;
 
 begin
@@ -53,6 +64,13 @@ begin
 	     i_shft_type	: in std_logic; -- 0 logical, 1 arithmetic
 	     o_data     	: out std_logic_vector(31 downto 0));
 
+    addsub: addersubtractor
+    generic map(32 => N)
+    port map( nAdd_Sub => i_aluOp,--in std_logic;
+            i_A 	   => i_A,--in std_logic_vector(N-1 downto 0);
+            i_B		   => i_B,--in std_logic_vector(N-1 downto 0);
+            o_Y		   => adderOutput,--out std_logic_vector(N-1 downto 0);
+            o_Cout	 => cOut);--out std_logic);
 
     process(i_aluOp, i_A, i_B) --Change Based On all inputs
     begin --TODO Implement all instructions
@@ -64,7 +82,7 @@ begin
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) OR i_B(i); --OR bits and place in o_F
             end loop;
-        elsif(i_aluOp = x"0100") then
+        elsif(i_aluOp = x"0100" | (aluOp = beq)) then
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) XOR i_B(i); --XOR bits and place in o_F
             end loop;
@@ -72,8 +90,24 @@ begin
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) NOR i_B(i); --NOR bits and place in o_F
             end loop;
+        elsif(i_aluOp(2 downto 0) = x"000" | i_aluOp(2 downto 0) = x"111" ) then
+            for i in 0 to 31 loop
+                o_F(i) <= adderOutput(i); --Place bits from adder into o_F
+            end loop;
+        elsif(i_aluOp = x"0111") then --Copy 0s into 31 bits, and then copy sign bit
+            for i in 1 to 31 loop
+                o_F(i) <= '0';
+            end loop;
+            o_F(0) <= adderOutput(31);
+        elsif(i_aluOp = x"0110") then --Copy 0s into lower 16 bits, and then copy into upper 16 bits
+            for i in 0 to 15 loop
+                o_F(i) <= '0';
+            end loop;
+            for i in 16 to 31 loop
+                o_F(i) <= i_B(i-16);
+            end loop;
         else
-                o_F <= '1';
+                o_F <= x"00000000"; --In case aluOp is not recognized
         end if;
     end process;
 end mixed;

@@ -21,7 +21,7 @@ use IEEE.std_logic_1164.all;
 entity barrel_shifter is
 	port(i_data		: in std_logic_vector(31 downto 0);
 	     i_shamt  	  	: in std_logic_vector(4 downto 0);
-	     i_shft_dir	  	: in std_logic; -- 0 left, 1 right
+	     i_shft_dir	  	: in std_logic; -- 1 left, 0 right
 	     i_shft_type	: in std_logic; -- 0 logical, 1 arithmetic
 	     o_data     	: out std_logic_vector(31 downto 0));
 end barrel_shifter;
@@ -102,8 +102,8 @@ begin
   shift_dir_mux: mux2t1_N
 	generic map(N=>32)
 	port map(i_S  => i_shft_dir,
-		 i_D0 => left_shift_in,
-		 i_D1 => i_data,
+		 i_D0 => i_data,
+		 i_D1 => left_shift_in,
 		 o_O  => s_data);
 
   -- 0 makes logical be put in and 1 makes arithmetic be put in

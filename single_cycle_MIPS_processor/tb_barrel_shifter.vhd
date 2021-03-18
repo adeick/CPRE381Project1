@@ -73,44 +73,44 @@ begin
     -- s_idata goes to hex number
     s_idata <= X"EEEEEEEE";
     s_shamt <= "01010"; -- shift by 10
-    s_shft_dir <= '1'; -- shift right
+    s_shft_dir <= '0'; -- shift right
     s_shft_type <= '0'; -- shift logical
     wait for cCLK_PER*2; 
 
     -- s_idata goes to hex number
     s_idata <= X"EEEEEEEE";
     s_shamt <= "01010"; -- shift by 10
-    s_shft_dir <= '1'; -- shift right
+    s_shft_dir <= '0'; -- shift right
     s_shft_type <= '1'; -- shift arithmetic
     wait for cCLK_PER*2; 
 
     -- s_idata goes to hex number
     s_idata <= X"7EEEEEEE";
     s_shamt <= "11111"; -- shift by 10
-    s_shft_dir <= '1'; -- shift right
+    s_shft_dir <= '0'; -- shift right
     s_shft_type <= '0'; -- shift logical
     wait for cCLK_PER*2; 
 
     -- s_idata goes to hex number
     s_idata <= X"7EEEEEEE";
     s_shamt <= "11111"; -- shift by 10
+    s_shft_dir <= '0'; -- shift right
+    s_shft_type <= '1'; -- shift arithmetic
+    wait for cCLK_PER*2; 
+
+
+
+    -- s_idata goes to hex number
+    s_idata <= X"EEEEEEEE";
+    s_shamt <= "01010"; -- shift by 10
     s_shft_dir <= '1'; -- shift left
-    s_shft_type <= '1'; -- shift arithmetic
-    wait for cCLK_PER*2; 
-
-
-
-    -- s_idata goes to hex number
-    s_idata <= X"EEEEEEEE";
-    s_shamt <= "01010"; -- shift by 10
-    s_shft_dir <= '0'; -- shift left
     s_shft_type <= '0'; -- shift logical
     wait for cCLK_PER*2; 
 
     -- s_idata goes to hex number
     s_idata <= X"7EEEEEE1";
     s_shamt <= "11111"; -- shift by 10
-    s_shft_dir <= '0'; -- shift left
+    s_shft_dir <= '1'; -- shift left
     s_shft_type <= '0'; -- shift arithmetic
     wait for cCLK_PER*2; 
 

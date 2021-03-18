@@ -20,6 +20,7 @@ entity alu is
 	port(i_A    : in std_logic_vector(31 downto 0);
          i_B        : in std_logic_vector(31 downto 0);
          i_aluOp    : in std_logic_vector(3 downto 0);
+	 i_shamt    : in std_logic_vector(4 downto 0);
          o_F        : in std_logic_vector(31 downto 0);
          cOut       : in std_logic;
          overFlow   : in std_logic;
@@ -30,16 +31,21 @@ end alu;
 architecture mixed of alu is
 
 signal s_RTYPE : std_logic_vector(11 downto 0);
-signal adderOutput : std_logic_vector(31 downto 0);
+signal adderOutput, barrelOutput : std_logic_vector(31 downto 0);
 signal s_RTYPE : std_logic_vector(31 downto 0);
 
--- TODO: Replace With Actual Barrel Shifter
 component barrelshifter is
 	port(i_data		: in std_logic_vector(31 downto 0);
 	     i_shamt  	  	: in std_logic_vector(4 downto 0);
 	     i_shft_dir	  	: in std_logic; -- 0 left, 1 right
 	     i_shft_type	: in std_logic; -- 0 logical, 1 arithmetic
 	     o_data     	: out std_logic_vector(31 downto 0));
+    end component;
+
+component beq_bne is
+	port(i_F		: in std_logic_vector(31 downto 0);
+	     i_equal_type  	: in std_logic; -- 0 is bne, 1 is beq
+	     o_zero     	: out std_logic);
     end component;
 
 component addersubtractor is
@@ -58,15 +64,20 @@ begin
 ---------------------------------------------------------------------------
 
     shifter: barrel_shifter
-	port(i_data		=> ,
-	     i_shamt  	  	: in std_logic_vector(4 downto 0);
-	     i_shft_dir	  	: in std_logic; -- 0 left, 1 right
-	     i_shft_type	: in std_logic; -- 0 logical, 1 arithmetic
-	     o_data     	: out std_logic_vector(31 downto 0));
+	port(i_data		=> i_B,
+	     i_shamt  	  	=> i_shamt,
+	     i_shft_dir	  	=> i_aluOp(0),
+	     i_shft_type	=> i_aluOp(1),
+	     o_data     	=> barrelOutput);
+
+    beq_bne_block: beq_bne
+	port(i_F 		=> o_F,
+	     i_equal_type 	=> i_aluOp(0),
+	     o_zero		=> zero);
 
     addsub: addersubtractor
     generic map(32 => N)
-    port map( nAdd_Sub => i_aluOp,--in std_logic;
+    port map( nAdd_Sub => i_aluOp(3),--in std_logic;
             i_A 	   => i_A,--in std_logic_vector(N-1 downto 0);
             i_B		   => i_B,--in std_logic_vector(N-1 downto 0);
             o_Y		   => adderOutput,--out std_logic_vector(N-1 downto 0);
@@ -82,7 +93,7 @@ begin
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) OR i_B(i); --OR bits and place in o_F
             end loop;
-        elsif(i_aluOp = x"0100" | (aluOp = beq)) then
+        elsif(i_aluOp = x"0100" | i_aluOp = x"1011" | i_aluOp = x"1100") then --make sure to XOR when doing beq bne
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) XOR i_B(i); --XOR bits and place in o_F
             end loop;
@@ -106,6 +117,8 @@ begin
             for i in 16 to 31 loop
                 o_F(i) <= i_B(i-16);
             end loop;
+	elsif(i_aluOp = x"1001" | i_aluOp = x"1000" | i_aluOp = x"1010") then -- srl, sra, or sll
+	    o_F    <= barrelOutput;
         else
                 o_F <= x"00000000"; --In case aluOp is not recognized
         end if;

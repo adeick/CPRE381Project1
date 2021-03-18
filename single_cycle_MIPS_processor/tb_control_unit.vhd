@@ -112,13 +112,13 @@ begin
     -- test sll
     s_opcode <= "000000";
     s_funct  <= "000000";
-    expected_out <= "010000011010";
+    expected_out <= "010010011010";
     wait for cCLK_PER/2;
 
     -- test srl
     s_opcode <= "000000";
     s_funct  <= "000010";
-    expected_out <= "010010011000";
+    expected_out <= "010000011000";
     wait for cCLK_PER/2;
 
     -- test sra

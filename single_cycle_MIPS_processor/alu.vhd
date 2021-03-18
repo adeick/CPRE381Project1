@@ -17,7 +17,7 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 -- entity
 entity alu is
-	port(i_A 	    : in std_logic_vector(31 downto 0);
+	port(i_A    : in std_logic_vector(31 downto 0);
          i_B        : in std_logic_vector(31 downto 0);
          i_aluOp    : in std_logic_vector(3 downto 0);
          o_F        : in std_logic_vector(31 downto 0);
@@ -32,6 +32,7 @@ architecture mixed of alu is
 signal s_RTYPE : std_logic_vector(11 downto 0);
 
 -- TODO: Replace With Actual Barrel Shifter
+<<<<<<< Updated upstream
 component barrel_shifter is
     generic(ADDR_WIDTH : integer;
             DATA_WIDTH : integer);
@@ -41,6 +42,14 @@ component barrel_shifter is
           data         : in std_logic_vector((DATA_WIDTH-1) downto 0);
           we           : in std_logic := '1';
           q            : out std_logic_vector((DATA_WIDTH -1) downto 0));
+=======
+component barrelshifter is
+	port(i_data		: in std_logic_vector(31 downto 0);
+	     i_shamt  	  	: in std_logic_vector(4 downto 0);
+	     i_shft_dir	  	: in std_logic; -- 0 left, 1 right
+	     i_shft_type	: in std_logic; -- 0 logical, 1 arithmetic
+	     o_data     	: out std_logic_vector(31 downto 0));
+>>>>>>> Stashed changes
     end component;
 
 begin
@@ -50,10 +59,19 @@ begin
 ---------------------------------------------------------------------------
 
     --TODO: Replace With Actual Barrel Shifter
+<<<<<<< Updated upstream
     shifter: barrel_shifter
     port map(i_opcode  	=> s_opCode, --in std_logic_vector(5 downto 0);
           i_funct	  	=> s_funcCode, --in std_logic_vector(5 downto 0);
           o_Ctrl_Unt	=> s_Ctrl); --out std_logic_vector(11 downto 0));
+=======
+    shifter: barrelshifter
+	port(i_data		=> ,
+	     i_shamt  	  	: in std_logic_vector(4 downto 0);
+	     i_shft_dir	  	: in std_logic; -- 0 left, 1 right
+	     i_shft_type	: in std_logic; -- 0 logical, 1 arithmetic
+	     o_data     	: out std_logic_vector(31 downto 0));
+>>>>>>> Stashed changes
 
 
     process(i_aluOp, i_A, i_B) --Change Based On all inputs

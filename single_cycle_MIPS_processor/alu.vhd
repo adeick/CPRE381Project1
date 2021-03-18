@@ -58,20 +58,12 @@ begin
 -- "ALUSrc  ALUControl  MemtoReg  we_mem  we_reg  RegDst  PCSrc  SignExt j"
 ---------------------------------------------------------------------------
 
-    --TODO: Replace With Actual Barrel Shifter
-<<<<<<< Updated upstream
     shifter: barrel_shifter
-    port map(i_opcode  	=> s_opCode, --in std_logic_vector(5 downto 0);
-          i_funct	  	=> s_funcCode, --in std_logic_vector(5 downto 0);
-          o_Ctrl_Unt	=> s_Ctrl); --out std_logic_vector(11 downto 0));
-=======
-    shifter: barrelshifter
 	port(i_data		=> ,
 	     i_shamt  	  	: in std_logic_vector(4 downto 0);
 	     i_shft_dir	  	: in std_logic; -- 0 left, 1 right
 	     i_shft_type	: in std_logic; -- 0 logical, 1 arithmetic
 	     o_data     	: out std_logic_vector(31 downto 0));
->>>>>>> Stashed changes
 
 
     process(i_aluOp, i_A, i_B) --Change Based On all inputs

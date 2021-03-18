@@ -32,7 +32,7 @@ architecture mixed of alu is
 signal s_RTYPE : std_logic_vector(11 downto 0);
 
 -- TODO: Replace With Actual Barrel Shifter
-component barrelshifter is
+component barrel_shifter is
     generic(ADDR_WIDTH : integer;
             DATA_WIDTH : integer);
     port(
@@ -50,7 +50,7 @@ begin
 ---------------------------------------------------------------------------
 
     --TODO: Replace With Actual Barrel Shifter
-    shifter: barrelshifter
+    shifter: barrel_shifter
     port map(i_opcode  	=> s_opCode, --in std_logic_vector(5 downto 0);
           i_funct	  	=> s_funcCode, --in std_logic_vector(5 downto 0);
           o_Ctrl_Unt	=> s_Ctrl); --out std_logic_vector(11 downto 0));

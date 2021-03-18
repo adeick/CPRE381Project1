@@ -32,24 +32,12 @@ architecture mixed of alu is
 signal s_RTYPE : std_logic_vector(11 downto 0);
 
 -- TODO: Replace With Actual Barrel Shifter
-<<<<<<< Updated upstream
-component barrel_shifter is
-    generic(ADDR_WIDTH : integer;
-            DATA_WIDTH : integer);
-    port(
-          clk          : in std_logic;
-          addr         : in std_logic_vector((ADDR_WIDTH-1) downto 0);
-          data         : in std_logic_vector((DATA_WIDTH-1) downto 0);
-          we           : in std_logic := '1';
-          q            : out std_logic_vector((DATA_WIDTH -1) downto 0));
-=======
 component barrelshifter is
 	port(i_data		: in std_logic_vector(31 downto 0);
 	     i_shamt  	  	: in std_logic_vector(4 downto 0);
 	     i_shft_dir	  	: in std_logic; -- 0 left, 1 right
 	     i_shft_type	: in std_logic; -- 0 logical, 1 arithmetic
 	     o_data     	: out std_logic_vector(31 downto 0));
->>>>>>> Stashed changes
     end component;
 
 begin

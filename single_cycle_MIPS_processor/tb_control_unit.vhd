@@ -70,7 +70,7 @@ begin
     -- test add
     s_opcode <= "000000";
     s_funct  <= "100000";
-    expected_out <= "011010011010";
+    expected_out <= "011100011010";
     wait for cCLK_PER/2;
 
     -- test addu
@@ -130,7 +130,7 @@ begin
     -- test sub
     s_opcode <= "000000";
     s_funct  <= "100010";
-    expected_out <= "011100011010";
+    expected_out <= "011110011010";
     wait for cCLK_PER/2;
 
     -- test subu

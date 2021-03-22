@@ -35,26 +35,26 @@ signal adderOutput, barrelOutput : std_logic_vector(31 downto 0);
 signal s_RTYPE : std_logic_vector(31 downto 0);
 
 component barrelshifter is
-	port(i_data		: in std_logic_vector(31 downto 0);
-	     i_shamt  	  	: in std_logic_vector(4 downto 0);
-	     i_shft_dir	  	: in std_logic; -- 0 left, 1 right
-	     i_shft_type	: in std_logic; -- 0 logical, 1 arithmetic
-	     o_data     	: out std_logic_vector(31 downto 0));
+	port(  i_data		     : in std_logic_vector(31 downto 0);
+	       i_shamt  	   : in std_logic_vector(4 downto 0);
+	       i_shft_dir	   : in std_logic; -- 0 left, 1 right
+	       i_shft_type	 : in std_logic; -- 0 logical, 1 arithmetic
+	       o_data     	 : out std_logic_vector(31 downto 0));
     end component;
 
 component beq_bne is
-	port(i_F		: in std_logic_vector(31 downto 0);
-	     i_equal_type  	: in std_logic; -- 0 is bne, 1 is beq
-	     o_zero     	: out std_logic);
+	port(   i_F		          : in std_logic_vector(31 downto 0);
+	        i_equal_type  	: in std_logic; -- 0 is bne, 1 is beq
+	     o_zero     	      : out std_logic);
     end component;
 
 component addersubtractor is
     generic(N : integer := 32); -- Generic of type integer for input/output data width. Default value is 32.
-    port( nAdd_Sub: in std_logic;
-            i_A 	  : in std_logic_vector(N-1 downto 0);
-                i_B		  : in std_logic_vector(N-1 downto 0);
-                o_Y		  : out std_logic_vector(N-1 downto 0);
-                o_Cout	: out std_logic);
+    port(       nAdd_Sub  : in std_logic;
+                i_A 	    : in std_logic_vector(N-1 downto 0);
+                i_B		    : in std_logic_vector(N-1 downto 0);
+                o_Y		    : out std_logic_vector(N-1 downto 0);
+                o_Cout	  : out std_logic);
     end component;
 
 begin

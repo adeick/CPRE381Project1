@@ -101,7 +101,7 @@ begin
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) NOR i_B(i); --NOR bits and place in o_F
             end loop;
-        elsif(i_aluOp(2 downto 0) = x"000" | i_aluOp(2 downto 0) = x"111" ) then
+        elsif(i_aluOp(2 downto 0) = x"000" | i_aluOp(2 downto 0) = x"111" ) then --sll slt addu
             for i in 0 to 31 loop
                 o_F(i) <= adderOutput(i); --Place bits from adder into o_F
             end loop;
@@ -119,8 +119,6 @@ begin
             end loop;
         elsif(i_aluOp = x"1001" | i_aluOp = x"1000" | i_aluOp = x"1010") then -- srl, sra, or sll
             o_F    <= barrelOutput;
-        elsif(i_aluOp = x"1110") then --sub
-            
         else
             o_F <= x"00000000"; --In case aluOp is not recognized
         end if;

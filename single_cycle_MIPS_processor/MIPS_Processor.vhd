@@ -86,6 +86,9 @@ signal s_jump     : std_logic;
 signal s_PCPlusFour   : std_logic_vector(N-1 downto 0);
 signal s_jumpAddress  : std_logic_vector(N-1 downto 0);
 signal s_branchAddress: std_logic_vector(N-1 downto 0);
+
+-- TODO: check if this signal is correct --
+signal s_normalOrBranch : std_logic_vector(31 downto 0);
   
 --ALU Items
 --Inputs:
@@ -223,7 +226,7 @@ begin
     s_jumpAddress(0) <= '0';
     s_jumpAddress(1) <= '0'; --Set first two bits to zero
     for i in 2 to 27 loop
-			s_jumpAddress(i) <= s_Instr(i-2); --Instruction bits[25-0] into bits[27-2] of jumpAddr
+			s_jumpAddress(i) <= s_Inst(i-2); --Instruction bits[25-0] into bits[27-2] of jumpAddr
 		end loop;
     for i in 28 to 31 loop
 			s_jumpAddress(i) <= s_PCPlusFour(i); --PC+4 bits[31-28] into bits[31-28] of jumpAddr
@@ -260,7 +263,7 @@ begin
           o_Ctrl_Unt	=> s_Ctrl); --out std_logic_vector(11 downto 0));
   
   addFour: addersubtractor
-  generic map(32 => N)
+  generic map(N => 32)
   port map( nAdd_Sub => '0',--in std_logic;
             i_A 	   => s_IMemAddr,--in std_logic_vector(N-1 downto 0);
             i_B		   => x"00000004",--in std_logic_vector(N-1 downto 0);
@@ -268,7 +271,7 @@ begin
             o_Cout	 => s1);--out std_logic);
   
   branchAdder: addersubtractor
-  generic map(32 => N)
+  generic map(N => 32)
   port map( nAdd_Sub => '0',--in std_logic;
             i_A 	   => s_PCPlusFour,--in std_logic_vector(N-1 downto 0);
             i_B		   => s_imm32x4,--in std_logic_vector(N-1 downto 0);
@@ -277,32 +280,32 @@ begin
 
   -- Muxes
   ALUSrc: mux2t1_N
-  generic map(32 => N) -- Generic of type integer for input/output data width. Default value is 32.
+  generic map(N => 32) -- Generic of type integer for input/output data width. Default value is 32.
   port map(i_S   => s_ALUSrc,
         i_D0      => s_DMemData,
         i_D1      => s_imm32,
         o_O       => s_immMuxOut);
 
   RegDst: mux2t1_N
-  generic map(5 => N) -- Generic of type integer for input/output data width. Default value is 32.
+  generic map(N => 5) -- Generic of type integer for input/output data width. Default value is 32.
   port map(i_S   => s_RegDst,
         i_D0      => s_RegInReadData2, --rt is taking the place of rd
         i_D1      => s_RegD, --rd
         o_O       => s_RegWrData);
   Branch: mux2t1_N
-  generic map(32 => N) 
+  generic map(N => 32) 
   port map(i_S    => (s_Branch AND s_ALUBranch),--TODO update the ALUBranch signal after ALU is implemented
         i_D0      => s_PCPlusFour, 
         i_D1      => s_branchAddress,
         o_O       => s_normalOrBranch);
   Jump: mux2t1_N
-  generic map(32 => N) 
+  generic map(N => 32) 
   port map(i_S    => s_jump,
         i_D0      => s_normalOrBranch, 
         i_D1      => s_jumpAddress,
         o_O       => s_NextInstAddr);
   MemtoReg: mux2t1_N
-  generic map(32 => N) 
+  generic map(N => 32) 
   port map(i_S    => s_MemtoReg,
         i_D0      => s_DMemAddr, --This is the ALU Output 
         i_D1      => s_DMemOut,

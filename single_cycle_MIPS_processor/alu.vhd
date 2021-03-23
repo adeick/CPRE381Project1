@@ -50,11 +50,11 @@ component beq_bne is
 
 component addersubtractor is
     generic(N : integer := 32); -- Generic of type integer for input/output data width. Default value is 32.
-    port( nAdd_Sub: in std_logic;
-            i_A 	  : in std_logic_vector(N-1 downto 0);
-                i_B		  : in std_logic_vector(N-1 downto 0);
-                o_Y		  : out std_logic_vector(N-1 downto 0);
-                o_Cout	: out std_logic);
+    	port( nAdd_Sub          : in std_logic;
+              i_A 	        : in std_logic_vector(N-1 downto 0);
+              i_B		: in std_logic_vector(N-1 downto 0);
+              o_Y		: out std_logic_vector(N-1 downto 0);
+              o_Cout	        : out std_logic);
     end component;
 
 begin
@@ -77,11 +77,11 @@ begin
 
     addsub: addersubtractor
     generic map(N => 32)
-    port map( nAdd_Sub => i_aluOp(3),--in std_logic;
+    port map( nAdd_Sub     => i_aluOp(3),--in std_logic;
             i_A 	   => i_A,--in std_logic_vector(N-1 downto 0);
             i_B		   => i_B,--in std_logic_vector(N-1 downto 0);
             o_Y		   => adderOutput,--out std_logic_vector(N-1 downto 0);
-            o_Cout	 => cOut);--out std_logic);
+            o_Cout	   => cOut);--out std_logic);
 
     process(i_aluOp, i_A, i_B) --Change Based On all inputs
     begin --TODO Implement all instructions
@@ -93,7 +93,7 @@ begin
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) OR i_B(i); --OR bits and place in o_F
             end loop;
-        elsif(i_aluOp = "0100" | i_aluOp = "1011" | i_aluOp = "1100") then --make sure to XOR when doing beq bne
+        elsif(i_aluOp = "0100" or i_aluOp = "1011" or i_aluOp = "1100") then --make sure to XOR when doing beq bne
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) XOR i_B(i); --XOR bits and place in o_F
             end loop;
@@ -101,7 +101,7 @@ begin
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) NOR i_B(i); --NOR bits and place in o_F
             end loop;
-        elsif(i_aluOp(2 downto 0) = "000" | i_aluOp(2 downto 0) = "111" ) then
+        elsif(i_aluOp(2 downto 0) = "000" or i_aluOp(2 downto 0) = "111" ) then
             for i in 0 to 31 loop
                 o_F(i) <= adderOutput(i); --Place bits from adder into o_F
             end loop;
@@ -117,7 +117,7 @@ begin
             for i in 16 to 31 loop
                 o_F(i) <= i_B(i-16);
             end loop;
-	elsif(i_aluOp = "1001" | i_aluOp = "1000" | i_aluOp = "1010") then -- srl, sra, or sll
+	elsif(i_aluOp = "1001" or i_aluOp = "1000" or i_aluOp = "1010") then -- srl, sra, or sll
 	    o_F    <= barrelOutput;
         else
                 o_F <= x"00000000"; --In case aluOp is not recognized

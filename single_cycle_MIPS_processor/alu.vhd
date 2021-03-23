@@ -21,18 +21,18 @@ entity alu is
          i_B        : in std_logic_vector(31 downto 0);
          i_aluOp    : in std_logic_vector(3 downto 0);
 	 i_shamt    : in std_logic_vector(4 downto 0);
-         o_F        : in std_logic_vector(31 downto 0);
-         cOut       : in std_logic;
-         overFlow   : in std_logic;
-         zero       : in std_logic);
+         o_F        : out std_logic_vector(31 downto 0);
+         cOut       : out std_logic;
+         overFlow   : out std_logic;
+         zero       : out std_logic);
 end alu;
 
 -- architecture
 architecture mixed of alu is
 
-signal s_RTYPE : std_logic_vector(11 downto 0);
+-- signal s_RTYPE : std_logic_vector(11 downto 0);
 signal adderOutput, barrelOutput : std_logic_vector(31 downto 0);
-signal s_RTYPE : std_logic_vector(31 downto 0);
+-- signal s_RTYPE : std_logic_vector(31 downto 0);
 
 component barrelshifter is
 	port(i_data		: in std_logic_vector(31 downto 0);
@@ -64,19 +64,19 @@ begin
 ---------------------------------------------------------------------------
 
     shifter: barrel_shifter
-	port(i_data		=> i_B,
+	port map(i_data		=> i_B,
 	     i_shamt  	  	=> i_shamt,
 	     i_shft_dir	  	=> i_aluOp(0),
 	     i_shft_type	=> i_aluOp(1),
 	     o_data     	=> barrelOutput);
 
     beq_bne_block: beq_bne
-	port(i_F 		=> o_F,
+	port map(i_F 		=> o_F,
 	     i_equal_type 	=> i_aluOp(0),
 	     o_zero		=> zero);
 
     addsub: addersubtractor
-    generic map(32 => N)
+    generic map(N => 32)
     port map( nAdd_Sub => i_aluOp(3),--in std_logic;
             i_A 	   => i_A,--in std_logic_vector(N-1 downto 0);
             i_B		   => i_B,--in std_logic_vector(N-1 downto 0);

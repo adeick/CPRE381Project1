@@ -34,7 +34,7 @@ architecture mixed of alu is
 signal adderOutput, barrelOutput : std_logic_vector(31 downto 0);
 -- signal s_RTYPE : std_logic_vector(31 downto 0);
 
-component barrelshifter is
+component barrel_shifter is
 	port(i_data		: in std_logic_vector(31 downto 0);
 	     i_shamt  	  	: in std_logic_vector(4 downto 0);
 	     i_shft_dir	  	: in std_logic; -- 0 left, 1 right
@@ -93,7 +93,7 @@ begin
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) OR i_B(i); --OR bits and place in o_F
             end loop;
-        elsif(i_aluOp = "0100" | i_aluOp = x"1011" | i_aluOp = x"1100") then --make sure to XOR when doing beq bne
+        elsif(i_aluOp = "0100" | i_aluOp = "1011" | i_aluOp = "1100") then --make sure to XOR when doing beq bne
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) XOR i_B(i); --XOR bits and place in o_F
             end loop;

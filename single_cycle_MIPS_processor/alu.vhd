@@ -85,39 +85,39 @@ begin
 
     process(i_aluOp, i_A, i_B) --Change Based On all inputs
     begin --TODO Implement all instructions
-        if(i_aluOp = x"0010") then
+        if(i_aluOp = "0010") then
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) AND i_B(i); --AND bits and place in o_F
             end loop;
-        elsif(i_aluOp = x"0011") then
+        elsif(i_aluOp = "0011") then
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) OR i_B(i); --OR bits and place in o_F
             end loop;
-        elsif(i_aluOp = x"0100" | i_aluOp = x"1011" | i_aluOp = x"1100") then --make sure to XOR when doing beq bne
+        elsif(i_aluOp = "0100" | i_aluOp = x"1011" | i_aluOp = x"1100") then --make sure to XOR when doing beq bne
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) XOR i_B(i); --XOR bits and place in o_F
             end loop;
-        elsif(i_aluOp = x"0101") then
+        elsif(i_aluOp = "0101") then
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) NOR i_B(i); --NOR bits and place in o_F
             end loop;
-        elsif(i_aluOp(2 downto 0) = x"000" | i_aluOp(2 downto 0) = x"111" ) then
+        elsif(i_aluOp(2 downto 0) = "000" | i_aluOp(2 downto 0) = "111" ) then
             for i in 0 to 31 loop
                 o_F(i) <= adderOutput(i); --Place bits from adder into o_F
             end loop;
-        elsif(i_aluOp = x"0111") then --Copy 0s into 31 bits, and then copy sign bit
+        elsif(i_aluOp = "0111") then --Copy 0s into 31 bits, and then copy sign bit
             for i in 1 to 31 loop
                 o_F(i) <= '0';
             end loop;
             o_F(0) <= adderOutput(31);
-        elsif(i_aluOp = x"0110") then --Copy 0s into lower 16 bits, and then copy into upper 16 bits
+        elsif(i_aluOp = "0110") then --Copy 0s into lower 16 bits, and then copy into upper 16 bits
             for i in 0 to 15 loop
                 o_F(i) <= '0';
             end loop;
             for i in 16 to 31 loop
                 o_F(i) <= i_B(i-16);
             end loop;
-	elsif(i_aluOp = x"1001" | i_aluOp = x"1000" | i_aluOp = x"1010") then -- srl, sra, or sll
+	elsif(i_aluOp = "1001" | i_aluOp = "1000" | i_aluOp = "1010") then -- srl, sra, or sll
 	    o_F    <= barrelOutput;
         else
                 o_F <= x"00000000"; --In case aluOp is not recognized

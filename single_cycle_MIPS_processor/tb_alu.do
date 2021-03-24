@@ -43,4 +43,4 @@ add wave -noupdate -label zero /tb_alu/s_zero
 
 
 # Run for 100 timesteps (default is 1ns per timestep, but this can be modified so be aware).
-run 3000
+run 3400

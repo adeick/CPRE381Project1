@@ -36,10 +36,10 @@ architecture behavior of tb_alu is
              i_B        : in std_logic_vector(31 downto 0);
              i_aluOp    : in std_logic_vector(3 downto 0);
 	     i_shamt    : in std_logic_vector(4 downto 0);
-             o_F        : in std_logic_vector(31 downto 0);
-             cOut       : in std_logic;
-             overFlow   : in std_logic;
-             zero       : in std_logic);
+             o_F        : out std_logic_vector(31 downto 0);
+             cOut       : out std_logic;
+             overFlow   : out std_logic;
+             zero       : out std_logic);
   end component;
 
   -- Temporary signals to connect to the dff component.

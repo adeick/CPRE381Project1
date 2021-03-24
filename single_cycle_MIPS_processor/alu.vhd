@@ -77,13 +77,13 @@ begin
 
     addsub: addersubtractor
     generic map(N => 32)
-    port map( nAdd_Sub     => i_aluOp(3),--in std_logic;
+    port map( nAdd_Sub     => i_aluOp(0),--in std_logic;
             i_A 	   => i_A,--in std_logic_vector(N-1 downto 0);
             i_B		   => i_B,--in std_logic_vector(N-1 downto 0);
             o_Y		   => adderOutput,--out std_logic_vector(N-1 downto 0);
             o_Cout	   => cOut);--out std_logic);
 
-    process(i_aluOp, i_A, i_B) --Change Based On all inputs
+    process(i_aluOp, i_A, i_B,adderOutput,barrelOutput) --Change Based On all inputs
     begin --TODO Implement all instructions
         if(i_aluOp = "0010") then
             for i in 0 to 31 loop
@@ -101,10 +101,6 @@ begin
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) NOR i_B(i); --NOR bits and place in o_F
             end loop;
-        elsif(i_aluOp(2 downto 0) = "000" or i_aluOp(2 downto 0) = "111" ) then
-            for i in 0 to 31 loop
-                o_F(i) <= adderOutput(i); --Place bits from adder into o_F
-            end loop;
         elsif(i_aluOp = "0111") then --Copy 0s into 31 bits, and then copy sign bit
             for i in 1 to 31 loop
                 o_F(i) <= '0';
@@ -119,6 +115,11 @@ begin
             end loop;
 	elsif(i_aluOp = "1001" or i_aluOp = "1000" or i_aluOp = "1010") then -- srl, sra, or sll
 	    o_F    <= barrelOutput;
+        elsif(i_aluOp(2 downto 0) = "000" or i_aluOp(2 downto 0) = "001" ) then -- addu, subu
+	    o_F <= adderOutput;
+            --for i in 0 to 31 loop
+               -- o_F(i) <= adderOutput(i); --Place bits from adder into o_F
+            --end loop;
         else
                 o_F <= x"00000000"; --In case aluOp is not recognized
         end if;

@@ -234,8 +234,8 @@ begin
   shift_dir_out_mux: mux2t1_N
 	generic map(N=>32)
 	port map(i_S  => i_shft_dir,
-		 i_D0 => left_shift_out,
-		 i_D1 => shamt4_out,
+		 i_D0 => shamt4_out,
+		 i_D1 => left_shift_out,
 		 o_O  => o_data);
 
 end structural;

@@ -1,0 +1,108 @@
+Reading C:/Modeltech_pe_edu_10.4a/tcl/vsim/pref.tcl
+
+# 10.4a
+
+# //  ModelSim PE Student Edition 10.4a Apr  7 2015 
+# //
+# //  Copyright 1991-2015 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //  THIS DOCUMENT CONTAINS TRADE SECRETS AND COMMERCIAL OR FINANCIAL
+# //  INFORMATION THAT ARE PRIVILEGED, CONFIDENTIAL, AND EXEMPT FROM
+# //  DISCLOSURE UNDER THE FREEDOM OF INFORMATION ACT, 5 U.S.C. SECTION 552.
+# //  FURTHERMORE, THIS INFORMATION IS PROHIBITED FROM DISCLOSURE UNDER
+# //  THE TRADE SECRETS ACT, 18 U.S.C. SECTION 1905.
+# //
+# // NOT FOR CORPORATE OR PRODUCTION USE.
+# // THE ModelSim PE Student Edition IS NOT A SUPPORTED PRODUCT.
+# // FOR HIGHER EDUCATION PURPOSES ONLY
+# //
+# vsim -c -voptargs="+acc" tb -do "../../modelsim_framework.do" 
+# Start time: 10:06:20 on Mar 04,2021
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.std_logic_textio(body)
+# Loading std.env(body)
+# Loading work.tb(mixed)
+# Loading ieee.numeric_std(body)
+# Loading work.mips_processor(structure)
+# Loading work.mem(rtl)
+# Loading work.controllogic(\I<3Nick\)
+# Loading work.controllogicpre(\I<3NickMore\)
+# Loading work.controllogicset(\I<3NickMore\)
+# Loading work.singlenot(dataflow)
+# Loading work.singleand(dataflow)
+# Loading work.mux2to1(structure)
+# Loading work.andg2(dataflow)
+# Loading work.invg(dataflow)
+# Loading work.org2(dataflow)
+# Loading work.mux2t1_32(structural)
+# Loading work.mux2t1_5(structural)
+# Loading work.adder32bit(\I<3Nick\)
+# Loading work.fulladder(\I<3Nick\)
+# Loading work.signextender(\I<3NickMore\)
+# Loading work.programcountregister(\I<3Nick\)
+# Loading work.registerfile(\I<3Nick\)
+# Loading work.nbitregister(\I<3Nick\)
+# Loading work.dffg(mixed)
+# Loading work.decoder32to1(\I<3NickMore\)
+# Loading work.mux32to1(\I<3NickMore\)
+# Loading work.processoralu(structural)
+# Loading work.or_32bit(dataflow)
+# Loading work.not_32bit(dataflow)
+# Loading work.xor_32bit(dataflow)
+# Loading work.and_32bit(dataflow)
+# Loading work.shift32_right(shift32_right)
+# Loading work.addsub(\I<3Nick\)
+# Loading work.complement(structure)
+# Loading work.mux2t1_n(structural)
+# Loading work.ripple_adder(\I<3Nick\)
+# Loading work.signbit(structure)
+# Loading work.oneto32bit(structure)
+# Loading work.shift32_left(testing)
+# Loading work.shift32ar_right(shift32ar_right)
+# ** Warning: (vsim-3473) Component instance "fetch : fetchRegister" is not bound.
+#    Time: 0 ns  Iteration: 0  Instance: /tb/MyMips File: F:/381TA/cpre381-toolflow/src/MIPS_Processor.vhd
+# ** Warning: (vsim-3473) Component instance "decode : decodeRegister" is not bound.
+#    Time: 0 ns  Iteration: 0  Instance: /tb/MyMips File: F:/381TA/cpre381-toolflow/src/MIPS_Processor.vhd
+# ** Warning: (vsim-3473) Component instance "memory : memoryRegister" is not bound.
+#    Time: 0 ns  Iteration: 0  Instance: /tb/MyMips File: F:/381TA/cpre381-toolflow/src/MIPS_Processor.vhd
+# ** Warning: (vsim-3473) Component instance "writeback : writebackRegister" is not bound.
+#    Time: 0 ns  Iteration: 0  Instance: /tb/MyMips File: F:/381TA/cpre381-toolflow/src/MIPS_Processor.vhd
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: /tb/MyMips/ALU/SRL_command
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: /tb/MyMips/ALU/SLL_command2
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: /tb/MyMips/ALU/SRA_command
+# ** Warning: Design size of 76649 statements or 4883 leaf instances exceeds ModelSim PE Student Edition recommended capacity.
+# Expect performance to be quite adversely affected.
+# do ../../modelsim_framework.do
+# ** Warning: (vsim-WLF-5000) WLF file currently in use: vsim.wlf
+# 
+#           File in use by: Mason  Hostname: MASON-PC  ProcessID: 14944
+# 
+#           Attempting to use alternate WLF file "./wlftriaix9".
+# ** Warning: (vsim-WLF-5001) Could not open WLF file: vsim.wlf
+# 
+#           Using alternate file: ./wlftriaix9
+# 
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: /tb/MyMips/ALU/SRA_command
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: /tb/MyMips/ALU/SLL_command2
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: /tb/MyMips/ALU/SRL_command
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: /tb/MyMips/DMem
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: /tb/MyMips/IMem
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 40 ns  Iteration: 5  Instance: /tb/MyMips/IMem
+
+** Fatal: vish lost connection to vsim process.
+** Fatal: Kernel lost connection to front end process.

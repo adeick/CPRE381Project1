@@ -37,7 +37,6 @@ architecture behavior of tb_alu is
              i_aluOp    : in std_logic_vector(3 downto 0);
 	     i_shamt    : in std_logic_vector(4 downto 0);
              o_F        : out std_logic_vector(31 downto 0);
-             cOut       : out std_logic;
              overFlow   : out std_logic;
              zero       : out std_logic);
   end component;
@@ -50,7 +49,7 @@ architecture behavior of tb_alu is
   signal s_shamt		: std_logic_vector(4 downto 0);
 
   signal s_F			: std_logic_vector(31 downto 0);
-  signal s_overFlow,s_zero,cOut	: std_logic;
+  signal s_overFlow,s_zero	: std_logic;
 
 
 begin
@@ -62,8 +61,7 @@ begin
 	   i_shamt  => s_shamt,
 	   o_F	    => s_F,
 	   overFlow => s_overFlow,
-	   zero     => s_zero,
-	   cOut	    => cOut);
+	   zero     => s_zero);
 
   -- This process sets the clock value (low for gCLK_HPER, then high
   -- for gCLK_HPER). Absent a "wait" command, processes restart 
@@ -126,7 +124,7 @@ begin
 
 
     -------- test addu ------------
-    -- expected o_F out is 0
+    -- expected o_F out is 1
     s_aluOp <= "0000"; -- alu op code
     s_A     <= X"00000000";
     s_B     <= X"00000001";
@@ -165,6 +163,52 @@ begin
 
     -- expected o_F is FDFFFFFF, overflow = 0, overflow case
     s_aluOp <= "0001"; -- alu op code
+    s_A     <= X"7FFFFFFF";
+    s_B     <= X"82000000";
+    s_shamt <= "01010"; -- don't care
+    wait for cCLK_PER;
+
+
+    -------- test add ------------
+    -- expected o_F out is 1
+    s_aluOp <= "1110"; -- alu op code
+    s_A     <= X"00000000";
+    s_B     <= X"00000001";
+    s_shamt <= "11111"; -- don't care
+    wait for cCLK_PER;
+
+    -- expected o_F out is 0EE51020
+    s_aluOp <= "1110"; -- alu op code
+    s_A     <= X"0EF10000";
+    s_B     <= X"FFF41020";
+    s_shamt <= "11111"; -- don't care
+    wait for cCLK_PER;
+
+    -- expected o_F is 00000010, overflow = 1, overflow case
+    s_aluOp <= "1110"; -- alu op code
+    s_A     <= X"80000000";
+    s_B     <= X"80000010";
+    s_shamt <= "01010"; -- don't care
+    wait for cCLK_PER;
+
+
+    -------- test sub ------------
+    -- expected o_F out is 1
+    s_aluOp <= "1111"; -- alu op code
+    s_A     <= X"FFFFFFFF";
+    s_B     <= X"FFFFFFFE";
+    s_shamt <= "11111"; -- don't care
+    wait for cCLK_PER;
+
+    -- expected o_F out is FEFCEFE0
+    s_aluOp <= "1111"; -- alu op code
+    s_A     <= X"0EF10000";
+    s_B     <= X"0FF41020";
+    s_shamt <= "11111"; -- don't care
+    wait for cCLK_PER;
+
+    -- expected o_F is FDFFFFFF, overflow = 1, overflow case
+    s_aluOp <= "1111"; -- alu op code
     s_A     <= X"7FFFFFFF";
     s_B     <= X"82000000";
     s_shamt <= "01010"; -- don't care

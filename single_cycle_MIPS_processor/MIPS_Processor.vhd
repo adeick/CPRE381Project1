@@ -24,8 +24,7 @@ entity MIPS_Processor is
        iInstLd         : in std_logic;
        iInstAddr       : in std_logic_vector(N-1 downto 0);
        iInstExt        : in std_logic_vector(N-1 downto 0);
-       oALUOut         : out std_logic_vector(N-1 downto 0)); -- TODO: Hook this up to the output of the ALU. It is important for synthesis that you have this output that can effectively be impacted by all other components so they are not optimized away.
-
+       oALUOut         : out std_logic_vector(N-1 downto 0)); 
 end  MIPS_Processor;
 
 
@@ -98,7 +97,7 @@ signal s_normalOrBranch : std_logic_vector(31 downto 0);
 signal s_ALUBranch: std_logic;
 --  s_ALUResult is named s_DMemAddr
 
-signal s1, s2 : std_logic; --don't care output from adder
+signal s1, s2, s3 : std_logic; --don't care output from adder and ALU
   component mem is
     generic(ADDR_WIDTH : integer;
             DATA_WIDTH : integer);
@@ -153,6 +152,17 @@ end component;
 		      o_Cout	: out std_logic);
   end component;
 
+  component alu is
+    port(i_A    : in std_logic_vector(31 downto 0);
+           i_B        : in std_logic_vector(31 downto 0);
+           i_aluOp    : in std_logic_vector(3 downto 0);
+           i_shamt    : in std_logic_vector(4 downto 0);
+           o_F        : out std_logic_vector(31 downto 0);
+           cOut       : out std_logic;
+           overFlow   : out std_logic;
+           zero       : out std_logic);
+  end component;
+
 begin
 
 
@@ -186,6 +196,8 @@ begin
 
   process(s_Inst) --snip the Instruction data into smaller parts
   begin
+    oALUOut<= s_DMemAddr; --Required for Synthesis
+
     for i in 0 to 15 loop
 			s_imm16(i) <= s_Inst(i); --bits[15-0] into Sign Extender
 		end loop;
@@ -193,7 +205,7 @@ begin
 			s_funcCode(i) <= s_Inst(i); --bits[5-0] into ALU Control 
 		end loop;
     for i in 6 to 10 loop --Shifter not Implemented Yet
-			s_shamt(i-6) <= s_Inst(i); --bits[1--6] into Barrel Shifter 
+			s_shamt(i-6) <= s_Inst(i); --bits[1--6] into ALU (for Barrel Shifter) 
 		end loop;
     for i in 11 to 15 loop
 			s_regD(i-11) <= s_Inst(i); --bits[11-15] into RegDstMux bits[4-0]
@@ -278,6 +290,17 @@ begin
             o_Y		   => s_branchAddress,--out std_logic_vector(N-1 downto 0);
             o_Cout	 => s2);--out std_logic);
 
+
+  mainALU: alu
+    port map( i_A        => s_RegOutReadData1, -- in std_logic_vector(31 downto 0);
+              i_B        => s_immMuxOut, -- in std_logic_vector(31 downto 0);
+              i_aluOp    => s_ALUOp, -- in std_logic_vector(3 downto 0);
+              i_shamt    => s_shamt, -- in std_logic_vector(4 downto 0);
+              o_F        => s_DMemAddr, -- out std_logic_vector(31 downto 0);
+              cOut       => s3, -- out std_logic;
+              overFlow   => s_Ovfl, -- out std_logic;
+              zero       => s_ALUBranch);-- out std_logic);
+
   -- Muxes
   ALUSrc: mux2t1_N
   generic map(N => 32) -- Generic of type integer for input/output data width. Default value is 32.
@@ -294,7 +317,7 @@ begin
         o_O       => s_RegWrData);
   Branch: mux2t1_N
   generic map(N => 32) 
-  port map(i_S    => (s_Branch AND s_ALUBranch),--TODO update the ALUBranch signal after ALU is implemented
+  port map(i_S    => (s_Branch AND s_ALUBranch),
         i_D0      => s_PCPlusFour, 
         i_D1      => s_branchAddress,
         o_O       => s_normalOrBranch);

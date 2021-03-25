@@ -20,9 +20,9 @@ entity alu is
 	port(i_A    : in std_logic_vector(31 downto 0);
          i_B        : in std_logic_vector(31 downto 0);
          i_aluOp    : in std_logic_vector(3 downto 0);
-	     i_shamt    : in std_logic_vector(4 downto 0);
+	 i_shamt    : in std_logic_vector(4 downto 0);
          o_F        : out std_logic_vector(31 downto 0);
-         cOut       : out std_logic;
+         --cOut       : out std_logic;
          overFlow   : out std_logic;
          zero       : out std_logic);
 end alu;
@@ -32,6 +32,7 @@ architecture mixed of alu is
 
 -- signal s_RTYPE : std_logic_vector(11 downto 0);
 signal adderOutput, barrelOutput : std_logic_vector(31 downto 0);
+signal s_overflowControl	 : std_logic;
 -- signal s_RTYPE : std_logic_vector(31 downto 0);
 
 component barrel_shifter is
@@ -48,13 +49,14 @@ component beq_bne is
 	     o_zero     	: out std_logic);
     end component;
 
-component addersubtractor is
+component alu_addersubtractor is
     generic(N : integer := 32); -- Generic of type integer for input/output data width. Default value is 32.
     	port( nAdd_Sub          : in std_logic;
+	      i_OvrflwCtrl      : in std_logic;
               i_A 	        : in std_logic_vector(N-1 downto 0);
               i_B		: in std_logic_vector(N-1 downto 0);
               o_Y		: out std_logic_vector(N-1 downto 0);
-              o_Cout	        : out std_logic);
+              o_Overflow	: out std_logic);
     end component;
 
 begin
@@ -62,6 +64,10 @@ begin
 -- "  0       0000          0        0      1       1       0       1    0"
 -- "ALUSrc  ALUControl  MemtoReg  we_mem  we_reg  RegDst  PCSrc  SignExt j"
 ---------------------------------------------------------------------------
+    with i_aluOp select s_overflowControl <=
+	'1' when "1110",
+	'1' when "1111",
+	'0' when others;
 
     shifter: barrel_shifter
 	port map(i_data		=> i_B,
@@ -75,13 +81,14 @@ begin
 	     i_equal_type 	=> i_aluOp(0),
 	     o_zero		=> zero);
 
-    addsub: addersubtractor
+    addsub: alu_addersubtractor
     generic map(N => 32)
     port map( nAdd_Sub     => i_aluOp(0),--in std_logic;
+	    i_OvrflwCtrl   => s_overflowControl, -- in std logic
             i_A 	   => i_A,--in std_logic_vector(N-1 downto 0);
             i_B		   => i_B,--in std_logic_vector(N-1 downto 0);
             o_Y		   => adderOutput,--out std_logic_vector(N-1 downto 0);
-            o_Cout	   => cOut);--out std_logic);
+            o_Overflow	   => overFlow);--out std_logic);
 
     process(i_aluOp, i_A, i_B,adderOutput,barrelOutput) --Change Based On all inputs
     begin --TODO Implement all instructions
@@ -115,7 +122,7 @@ begin
             end loop;
 	elsif(i_aluOp = "1001" or i_aluOp = "1000" or i_aluOp = "1010") then -- srl, sra, or sll
 	    o_F    <= barrelOutput;
-        elsif(i_aluOp(2 downto 0) = "000" or i_aluOp(2 downto 0) = "001" ) then -- addu, subu
+        elsif(i_aluOp = "0000" or i_aluOp = "0001" or i_aluOp = "1110" or i_aluOp = "1111" ) then -- addu, subu, add, sub
 	    o_F <= adderOutput;
             --for i in 0 to 31 loop
                -- o_F(i) <= adderOutput(i); --Place bits from adder into o_F

@@ -17,14 +17,14 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 
-package mypack is 
-	type TwoDArray is array (31 downto 0) of std_logic_vector(31 downto 0);
-end package;
+-- package mypack is 
+-- 	type TwoDArray is array (31 downto 0) of std_logic_vector(31 downto 0);
+-- end package;
 
-library IEEE;
-use IEEE.std_logic_1164.all;
+-- library IEEE;
+-- use IEEE.std_logic_1164.all;
+-- use work.mypack.all;
 use work.mypack.all;
-
 
 
 entity mux32t1 is

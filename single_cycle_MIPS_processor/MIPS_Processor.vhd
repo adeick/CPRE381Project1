@@ -69,7 +69,7 @@ architecture structure of MIPS_processor is
   signal s_funcCode : std_logic_vector(5 downto 0);--instruction bits[5-0]
   
   
-  signal s_Ctrl  : std_logic_vector(11 downto 0); --Control Brick Output, each bit is a different switch
+  signal s_Ctrl  : std_logic_vector(12 downto 0); --Control Brick Output, each bit is a different switch
 --Control Signals
 signal s_ALUSrc    : std_logic; 
 signal s_ALUOp     : std_logic_vector(3 downto 0); --ALU Code
@@ -115,7 +115,7 @@ signal s1, s2, s3 : std_logic; --don't care output from adder and ALU
   component control_unit is
     port( i_opcode  	: in std_logic_vector(5 downto 0);
 	        i_funct	  	: in std_logic_vector(5 downto 0);
-	        o_Ctrl_Unt	: out std_logic_vector(11 downto 0));
+	        o_Ctrl_Unt	: out std_logic_vector(12 downto 0));
   end component;
 
   component regfile is 
@@ -230,6 +230,8 @@ begin
     s_Branch    <= s_Ctrl(9);
     s_SignExt  <= s_Ctrl(10);
     s_jump     <= s_Ctrl(11);
+
+    s_Halt <= s_Ctrl(12);
     end process;
 
   addFour: addersubtractor

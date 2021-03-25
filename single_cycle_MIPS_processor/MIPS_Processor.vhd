@@ -68,7 +68,7 @@ architecture structure of MIPS_processor is
   signal s_opCode   : std_logic_vector(5 downto 0);--instruction bits[31-26] 
   signal s_funcCode : std_logic_vector(5 downto 0);--instruction bits[5-0]
   
-  
+  signal s_inputPC: std_logic_vector(31 downto 0); --wire from the jump mux
   signal s_Ctrl  : std_logic_vector(12 downto 0); --Control Brick Output, each bit is a different switch
 --Control Signals
 signal s_ALUSrc    : std_logic; 
@@ -163,6 +163,12 @@ end component;
            zero       : out std_logic);
   end component;
 
+  component pc is 
+  port(
+    i_CLK : in std_logic; --=> iClk,
+    i_RST : in std_logic; --=> iRST,
+    i_D   : in std_logic_vector(31 downto 0); --s_inputPC, 
+    o_Q   : in std_logic_vector(31 downto 0));--=> s_NextInstAddr);
 
 begin
 
@@ -258,6 +264,13 @@ begin
     s_imm32x4(31 downto 2) <= s_imm32(29 downto 0); --imm32 bits[29-0] into bits[31-2] of jumpAddr
 	end process;
 
+  pcReg: pc 
+  port map(
+    i_CLK => iClk,
+    i_RST => iRST,
+    i_D => s_inputPC, 
+    o_Q => s_NextInstAddr);
+
   --RegFile: --
   registers: regfile 
   port map(clk			=> iCLK,--std_logic;
@@ -313,7 +326,7 @@ begin
   port map(i_S    => s_jump,
         i_D0      => s_normalOrBranch, 
         i_D1      => s_jumpAddress,
-        o_O       => s_NextInstAddr);
+        o_O       => s_inputPC);
   MemtoReg: mux2t1_N
   generic map(N => 32) 
   port map(i_S    => s_MemtoReg,

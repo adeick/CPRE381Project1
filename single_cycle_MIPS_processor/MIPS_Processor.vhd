@@ -75,7 +75,8 @@ signal s_ALUSrc    : std_logic;
 signal s_ALUOp     : std_logic_vector(3 downto 0); --ALU Code
 signal s_MemtoReg    : std_logic; 
 -- s_MemWrite this is s_DMemWr 
-signal s_RegWrite    : std_logic; 
+--signal s_RegWrite    : std_logic;
+--this is s_RegWr 
 signal s_RegDst       : std_logic;
 signal s_Branch        : std_logic;
 signal s_SignExt     : std_logic; 
@@ -224,7 +225,7 @@ begin
 		s_ALUOp(3 downto 0) <= s_Ctrl(4 downto 1);
     s_MemtoReg <= s_Ctrl(6);
     s_DMemWr <= s_Ctrl(5); 
-    s_RegWrite <= s_Ctrl(7);
+    s_RegWr <= s_Ctrl(7);
     s_RegDst   <= s_Ctrl(8);
     s_Branch    <= s_Ctrl(9);
     s_SignExt  <= s_Ctrl(10);

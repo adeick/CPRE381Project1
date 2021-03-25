@@ -163,7 +163,7 @@ end component;
            zero       : out std_logic);
   end component;
 
-  component pc is 
+  component MIPS_pc is 
   port(
     i_CLK : in std_logic; --=> iClk,
     i_RST : in std_logic; --=> iRST,
@@ -264,7 +264,7 @@ begin
     s_imm32x4(31 downto 2) <= s_imm32(29 downto 0); --imm32 bits[29-0] into bits[31-2] of jumpAddr
 	end process;
 
-  pcReg: pc 
+  pcReg: MIPS_pc
   port map(
     i_CLK => iClk,
     i_RST => iRST,

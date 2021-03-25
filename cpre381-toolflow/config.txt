@@ -1,3 +1,3 @@
-Python Path = C:\Users\a8dei\AppData\Local\Programs\Python\Python39\python.exe
+Python Path = C:\Users\mlmj1\AppData\Local\Programs\Python\Python37-32\python.exe
 ModelSim Path = C:\intelFPGA_pro\20.4\modelsim_ase\win32aloem
 Quartus Path = C:\intelFPGA\20.1\quartus\bin64

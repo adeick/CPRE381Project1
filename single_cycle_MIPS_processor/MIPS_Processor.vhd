@@ -159,10 +159,10 @@ end component;
            i_aluOp    : in std_logic_vector(3 downto 0);
            i_shamt    : in std_logic_vector(4 downto 0);
            o_F        : out std_logic_vector(31 downto 0);
-           cOut       : out std_logic;
            overFlow   : out std_logic;
            zero       : out std_logic);
   end component;
+
 
 begin
 
@@ -285,7 +285,6 @@ begin
               i_aluOp    => s_ALUOp, -- in std_logic_vector(3 downto 0);
               i_shamt    => s_shamt, -- in std_logic_vector(4 downto 0);
               o_F        => s_DMemAddr, -- out std_logic_vector(31 downto 0);
-              cOut       => s3, -- out std_logic;
               overFlow   => s_Ovfl, -- out std_logic;
               zero       => s_ALUBranch);-- out std_logic);
 

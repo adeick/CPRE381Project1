@@ -49,7 +49,7 @@ with i_funct select s_RTYPE <=
 
 with i_opcode select o_Ctrl_Unt <=
     s_RTYPE  	    when "000000", -- RTYPE
-    "111010010010"  when "001000", -- addi
+    "111100010010"  when "001000", -- addi
     "100000010010"  when "001001", -- addiu
     "100100010000"  when "001100", -- andi
     "101000010000"  when "001110", -- xori

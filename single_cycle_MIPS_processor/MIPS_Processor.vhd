@@ -17,7 +17,7 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 
-entity MIPS_Processor is
+entity MIPS_processor is
   generic(N : integer := 32);
   port(iCLK            : in std_logic;
        iRST            : in std_logic;
@@ -25,10 +25,10 @@ entity MIPS_Processor is
        iInstAddr       : in std_logic_vector(N-1 downto 0);
        iInstExt        : in std_logic_vector(N-1 downto 0);
        oALUOut         : out std_logic_vector(N-1 downto 0)); 
-end  MIPS_Processor;
+end  MIPS_processor;
 
 
-architecture structure of MIPS_Processor is
+architecture structure of MIPS_processor is
 
   -- Required data memory signals
   signal s_DMemWr       : std_logic; -- TODO: use this signal as the final active high data memory write enable signal
@@ -194,38 +194,34 @@ begin
              we   => s_DMemWr,
              q    => s_DMemOut);
 
-  process(s_Inst) --snip the Instruction data into smaller parts
+  instructionSlice: process(s_Inst) --snip the Instruction data into smaller parts
   begin
-    oALUOut<= s_DMemAddr; --Required for Synthesis
+    oALUOut <= s_DMemAddr; --oALU is for synthesis
 
-    for i in 0 to 15 loop
-			s_imm16(i) <= s_Inst(i); --bits[15-0] into Sign Extender
-		end loop;
-		for i in 0 to 5 loop --Control not Implemented Yet
-			s_funcCode(i) <= s_Inst(i); --bits[5-0] into ALU Control 
-		end loop;
-    for i in 6 to 10 loop --Shifter not Implemented Yet
-			s_shamt(i-6) <= s_Inst(i); --bits[1--6] into ALU (for Barrel Shifter) 
-		end loop;
-    for i in 11 to 15 loop
-			s_regD(i-11) <= s_Inst(i); --bits[11-15] into RegDstMux bits[4-0]
-		end loop;
-    for i in 16 to 20 loop
-			s_RegInReadData2(i-16) <= s_Inst(i); --bits[16-20] into RegDstMux and Register (bits[4-0])
-		end loop;
-    for i in 21 to 25 loop
-			s_RegInReadData1(i-21) <= s_Inst(i); --bits[25-21] into Register (bits[4-0])
-		end loop;
-    for i in 26 to 31 loop 
-			s_opCode(i-26) <= s_Inst(i); --bits[26-31] into Control Brick (bits[5-0])
-      --TODO Adjust this once Control Brick is implemented, opCode should change ALUOp
-		end loop;
+			s_imm16(15 downto 0) <= s_Inst(15 downto 0); --bits[15-0] into Sign Extender
+			s_funcCode(5 downto 0) <= s_Inst(5 downto 0); --bits[5-0] into ALU Control 
+			s_shamt(4 downto 0) <= s_Inst(10 downto 6); --bits[1--6] into ALU (for Barrel Shifter) 
+			s_regD(4 downto 0) <= s_Inst(15 downto 11); --bits[11-15] into RegDstMux bits[4-0]
+			s_RegInReadData2(4 downto 0) <= s_Inst(20 downto 16); --bits[16-20] into RegDstMux and Register (bits[4-0])
+			s_RegInReadData1(4 downto 0) <= s_Inst(25 downto 21); --bits[25-21] into Register (bits[4-0])
+			s_opCode(5 downto 0) <= s_Inst(31 downto 26); --bits[26-31] into Control Brick (bits[5-0)
 
+      s_jumpAddress(0) <= '0';
+      s_jumpAddress(1) <= '0'; --Set first two bits to zero
+      s_jumpAddress(27 downto 2) <= s_Inst(25 downto 0); --Instruction bits[25-0] into bits[27-2] of jumpAddr
+    end process;
+
+    
+  control: control_unit
+  port map(i_opcode  	=> s_opCode, --in std_logic_vector(5 downto 0);
+          i_funct	  	=> s_funcCode, --in std_logic_vector(5 downto 0);
+          o_Ctrl_Unt	=> s_Ctrl); --out std_logic_vector(11 downto 0));
+
+    controlSlice: process(s_Ctrl)
+    begin
     --Control Signals
     s_ALUSrc <= s_Ctrl(0);
-    for i in 1 to 4 loop
-			s_ALUOp(i-1) <= s_Ctrl(i); --bits[15-0] into Sign Extender
-		end loop;
+		s_ALUOp(3 downto 0) <= s_Ctrl(4 downto 1);
     s_MemtoReg <= s_Ctrl(6);
     s_DMemWr <= s_Ctrl(5); 
     s_RegWrite <= s_Ctrl(7);
@@ -233,23 +229,30 @@ begin
     s_Branch    <= s_Ctrl(9);
     s_SignExt  <= s_Ctrl(10);
     s_jump     <= s_Ctrl(11);
+    end process;
 
+  addFour: addersubtractor
+  generic map(N => 32)
+  port map( nAdd_Sub => '0',--in std_logic;
+            i_A 	   => s_IMemAddr,--in std_logic_vector(N-1 downto 0);
+            i_B		   => x"00000004",--in std_logic_vector(N-1 downto 0);
+            o_Y		   => s_PCPlusFour,--out std_logic_vector(N-1 downto 0);
+            o_Cout	 => s1);--out std_logic);
+
+  signExtender: extender
+  port map( i_I     => s_imm16, --in std_logic_vector(15 downto 0);     -- Data value input
+	          i_C			=> s_SignExt, --in std_logic; --0 for zero, 1 for sign-extension
+            o_O     => s_imm32); --out std_logic_vector(31 downto 0));   -- Data value output);
+
+  jumpAddresses: process(s_PCPlusFour, s_imm32)
+  begin
     --Calculate Jump Address
-    s_jumpAddress(0) <= '0';
-    s_jumpAddress(1) <= '0'; --Set first two bits to zero
-    for i in 2 to 27 loop
-			s_jumpAddress(i) <= s_Inst(i-2); --Instruction bits[25-0] into bits[27-2] of jumpAddr
-		end loop;
-    for i in 28 to 31 loop
-			s_jumpAddress(i) <= s_PCPlusFour(i); --PC+4 bits[31-28] into bits[31-28] of jumpAddr
-		end loop;
+      s_jumpAddress(31 downto 28) <= s_PCPlusFour(31 downto 28); --PC+4 bits[31-28] into bits[31-28] of jumpAddr
 
     --Calculate Branch Address Offset
     s_imm32x4(0) <= '0';
     s_imm32x4(1) <= '0'; --Set first two bits to zero
-    for i in 2 to 31 loop
-		s_imm32x4(i) <= s_imm32(i-2); --imm32 bits[29-0] into bits[31-2] of jumpAddr
-		end loop;
+    s_imm32x4(31 downto 2) <= s_imm32(29 downto 0); --imm32 bits[29-0] into bits[31-2] of jumpAddr
 	end process;
 
   --RegFile: --
@@ -264,24 +267,6 @@ begin
     o_d1            => s_RegOutReadData1,-- std_logic_vector(31 downto 0);
     o_d2            => s_DMemData);-- std_logic_vector(31 downto 0));
 
-  signExtender: extender
-  port map( i_I     => s_imm16, --in std_logic_vector(15 downto 0);     -- Data value input
-	          i_C			=> s_SignExt, --in std_logic; --0 for zero, 1 for sign-extension
-            o_O     => s_imm32); --out std_logic_vector(31 downto 0));   -- Data value output);
-
-  control: control_unit
-  port map(i_opcode  	=> s_opCode, --in std_logic_vector(5 downto 0);
-          i_funct	  	=> s_funcCode, --in std_logic_vector(5 downto 0);
-          o_Ctrl_Unt	=> s_Ctrl); --out std_logic_vector(11 downto 0));
-  
-  addFour: addersubtractor
-  generic map(N => 32)
-  port map( nAdd_Sub => '0',--in std_logic;
-            i_A 	   => s_IMemAddr,--in std_logic_vector(N-1 downto 0);
-            i_B		   => x"00000004",--in std_logic_vector(N-1 downto 0);
-            o_Y		   => s_PCPlusFour,--out std_logic_vector(N-1 downto 0);
-            o_Cout	 => s1);--out std_logic);
-  
   branchAdder: addersubtractor
   generic map(N => 32)
   port map( nAdd_Sub => '0',--in std_logic;

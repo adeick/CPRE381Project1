@@ -6,11 +6,8 @@ internal/ModelSimContainer/*
 !internal/ModelSimContainer/.gitkeep
 
 internal/QuartusWork
-
-src/*
-!src/MIPS_Processor.vhd
-!src/tb.vhd
-!src/mem.vhd
+ 
+config.txt
 
 .vscode/
 __pycache__/

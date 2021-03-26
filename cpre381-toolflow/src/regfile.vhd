@@ -47,7 +47,7 @@ architecture structural of regfile is
        o_O          : out std_logic_vector(31 downto 0));   -- Data value output
 	end component;
 
-	component dffg_N
+	component dffg_n
 	 port(i_CLK     : in std_logic;     -- Clock input
        i_RST        : in std_logic;     -- Reset input
        i_WE         : in std_logic;     -- Write enable input
@@ -63,7 +63,7 @@ begin
 	writeDecoder: decoder5t32
     port MAP(i_wA, s1);
 			 
-	REG0: dffg_N port map(
+	REG0: dffg_n port map(
 			i_CLK	=> clk,
 			i_RST 	=> reset,
 			i_WE 	=> '0',
@@ -78,7 +78,7 @@ begin
 	end process;
 	
 	RegisterList: for i in 1 to 31 generate
-		REGI: dffg_N port map(
+		REGI: dffg_n port map(
 			i_CLK	=> clk,
 			i_RST 	=> reset,
 			i_WE 	=> s3(i),

@@ -169,11 +169,10 @@ end component;
     i_RST : in std_logic; --=> iRST,
     i_D   : in std_logic_vector(31 downto 0); --s_inputPC, 
     o_Q   : in std_logic_vector(31 downto 0));--=> s_NextInstAddr);
+  end component;
 
 begin
-
-
-
+  
   with iInstLd select
     s_IMemAddr <= s_NextInstAddr when '0',
       iInstAddr when others;

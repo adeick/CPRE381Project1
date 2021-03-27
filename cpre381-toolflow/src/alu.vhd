@@ -108,7 +108,7 @@ begin
             for i in 0 to 31 loop
                 o_F(i) <= i_A(i) NOR i_B(i); --NOR bits and place in o_F
             end loop;
-        elsif(i_aluOp = "0111") then --Copy 0s into 31 bits, and then copy sign bit
+        elsif(i_aluOp = "0111") then --slt Copy 0s into 31 bits, and then copy sign bit 
             for i in 1 to 31 loop
                 o_F(i) <= '0';
             end loop;

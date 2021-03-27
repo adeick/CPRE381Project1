@@ -206,7 +206,6 @@ begin
 
   instructionSlice: process(s_Inst) --snip the Instruction data into smaller parts
   begin
-    oALUOut <= s_DMemAddr; --oALU is for synthesis
 
 			s_imm16(15 downto 0) <= s_Inst(15 downto 0); --bits[15-0] into Sign Extender
 			s_funcCode(5 downto 0) <= s_Inst(5 downto 0); --bits[5-0] into ALU Control 
@@ -220,7 +219,8 @@ begin
       s_jumpAddress(1) <= '0'; --Set first two bits to zero
       s_jumpAddress(27 downto 2) <= s_Inst(25 downto 0); --Instruction bits[25-0] into bits[27-2] of jumpAddr
     end process;
-
+    
+    oALUOut <= s_DMemAddr; --oALU is for synthesis
     
   control: control_unit
   port map(i_opcode  	=> s_opCode, --in std_logic_vector(5 downto 0);

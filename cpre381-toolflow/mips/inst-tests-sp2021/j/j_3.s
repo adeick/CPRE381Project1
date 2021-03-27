@@ -17,6 +17,6 @@ ISZERO:
 	
 DONTJUMP:
     # Exit program
-    halt
+   # halt
     li $v0, 10
     syscall

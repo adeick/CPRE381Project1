@@ -32,7 +32,7 @@ architecture mixed of alu is
 
 -- signal s_RTYPE : std_logic_vector(11 downto 0);
 signal adderOutput, barrelOutput : std_logic_vector(31 downto 0);
-signal s_overflowControl	 : std_logic;
+signal s_overflowControl,s_addSuboverFlow	 : std_logic;
 -- signal s_RTYPE : std_logic_vector(31 downto 0);
 
 component barrel_shifter is
@@ -52,12 +52,17 @@ component beq_bne is
 component alu_addersubtractor is
     generic(N : integer := 32); -- Generic of type integer for input/output data width. Default value is 32.
     	port( nAdd_Sub          : in std_logic;
-	      i_OvrflwCtrl      : in std_logic;
               i_A 	        : in std_logic_vector(N-1 downto 0);
               i_B		: in std_logic_vector(N-1 downto 0);
               o_Y		: out std_logic_vector(N-1 downto 0);
               o_Overflow	: out std_logic);
     end component;
+
+  component andg2 is
+     port(i_A          : in std_logic;
+          i_B          : in std_logic;
+          o_F          : out std_logic);
+  end component;
 
 begin
 ------------------------- FORMAT of o_Ctrl_Unt ----------------------------
@@ -84,13 +89,17 @@ begin
     addsub: alu_addersubtractor
     generic map(N => 32)
     port map( nAdd_Sub     => i_aluOp(0),--in std_logic;
-	    i_OvrflwCtrl   => s_overflowControl, -- in std logic
             i_A 	   => i_A,--in std_logic_vector(N-1 downto 0);
             i_B		   => i_B,--in std_logic_vector(N-1 downto 0);
             o_Y		   => adderOutput,--out std_logic_vector(N-1 downto 0);
-            o_Overflow	   => overFlow);--out std_logic);
+            o_Overflow	   => s_addSuboverFlow);--out std_logic);
 
-    process(i_aluOp, i_A, i_B,adderOutput,barrelOutput) --Change Based On all inputs
+    overflow_control: andg2
+    port map(i_A => s_overflowControl,
+	    i_B => s_addSuboverFlow,
+	    o_F => overFlow);
+
+    process(i_aluOp, i_A, i_B,adderOutput,barrelOutput,s_addSuboverFlow) --Change Based On all inputs
     begin --TODO Implement all instructions
         if(i_aluOp = "0010") then
             for i in 0 to 31 loop
@@ -112,7 +121,7 @@ begin
             for i in 1 to 31 loop
                 o_F(i) <= '0';
             end loop;
-            o_F(0) <= adderOutput(31);
+            o_F(0) <= adderOutput(31) XOR s_addSuboverFlow;
         elsif(i_aluOp = "0110") then --Copy 0s into lower 16 bits, and then copy into upper 16 bits
             for i in 0 to 15 loop
                 o_F(i) <= '0';

@@ -38,7 +38,7 @@ loop: lw   $s3, 0($s0)      # Get value from array F[n-2]
       jal  print            # call print routine. 
 
       # The program is finished. Exit.
-      halt
+      #halt
       j die 
 		
 ###############################################################

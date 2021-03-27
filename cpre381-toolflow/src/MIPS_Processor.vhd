@@ -91,8 +91,7 @@ signal s_branchAddress: std_logic_vector(N-1 downto 0);
 signal s_MemToReg0    : std_logic_vector(31 downto 0);
 signal s_RegDst0      : std_logic_vector(4 downto 0);
 
--- TODO: check if this signal is correct --
-signal s_normalOrBranch : std_logic_vector(31 downto 0);
+signal s_normalOrBranch,s_finalJumpAddress : std_logic_vector(31 downto 0);
   
 --ALU Items
 --Inputs:

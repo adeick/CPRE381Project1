@@ -36,7 +36,7 @@ architecture structural of MIPS_pc is
        o_Q          : out std_logic);   -- Data value output
   end component;
 
-  signal s_RST_data : std_logic_vector(31 downto 0) := X"00040000";
+  signal s_RST_data : std_logic_vector(31 downto 0) := X"00400000";
 
 begin
 

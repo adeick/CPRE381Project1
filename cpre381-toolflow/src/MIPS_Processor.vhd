@@ -168,7 +168,7 @@ end component;
     i_CLK : in std_logic; --=> iClk,
     i_RST : in std_logic; --=> iRST,
     i_D   : in std_logic_vector(31 downto 0); --s_inputPC, 
-    o_Q   : in std_logic_vector(31 downto 0));--=> s_NextInstAddr);
+    o_Q   : out std_logic_vector(31 downto 0));--=> s_NextInstAddr);
   end component;
 
 begin
@@ -226,17 +226,17 @@ begin
     controlSlice: process(s_Ctrl)
     begin
     --Control Signals
-    s_ALUSrc <= s_Ctrl(0);
-		s_ALUOp(3 downto 0) <= s_Ctrl(4 downto 1);
-    s_MemtoReg <= s_Ctrl(6);
-    s_DMemWr <= s_Ctrl(5); 
-    s_RegWr <= s_Ctrl(7);
-    s_RegDst   <= s_Ctrl(8);
-    s_Branch    <= s_Ctrl(9);
-    s_SignExt  <= s_Ctrl(10);
-    s_jump     <= s_Ctrl(11);
+    s_ALUSrc <= s_Ctrl(12);
+    s_ALUOp(3 downto 0) <= s_Ctrl(11 downto 8);
+    s_MemtoReg <= s_Ctrl(7);
+    s_DMemWr <= s_Ctrl(6); 
+    s_RegWr <= s_Ctrl(5);
+    s_RegDst   <= s_Ctrl(4);
+    s_Branch    <= s_Ctrl(3);
+    s_SignExt  <= s_Ctrl(2);
+    s_jump     <= s_Ctrl(1);
 
-    s_Halt <= s_Ctrl(12);
+    s_Halt <= s_Ctrl(0);
     end process;
 
   addFour: addersubtractor
@@ -313,7 +313,7 @@ begin
   port map(i_S   => s_RegDst,
         i_D0      => s_RegInReadData2, --rt is taking the place of rd
         i_D1      => s_RegD, --rd
-        o_O       => s_RegWrData);
+        o_O       => s_RegWrAddr);
   Branch: mux2t1_N
   generic map(N => 32) 
   port map(i_S    => (s_Branch AND s_ALUBranch),

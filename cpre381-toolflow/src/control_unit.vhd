@@ -28,6 +28,7 @@ signal s_RTYPE : std_logic_vector(12 downto 0);
 begin
 
 ------------------------- FORMAT of o_Ctrl_Unt ----------------------------
+-- " 12       11-8	    7	     6      5       4       3       2    1   0
 -- "  0       0000          0        0      1       1       0       1    0"  0
 -- "ALUSrc  ALUControl  MemtoReg  we_mem  we_reg  RegDst  PCSrc  SignExt j" Halt
 ---------------------------------------------------------------------------

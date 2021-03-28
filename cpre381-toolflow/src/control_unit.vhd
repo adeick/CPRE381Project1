@@ -61,6 +61,7 @@ with i_opcode select o_Ctrl_Unt <=
     "001010000100000"  when "001110", -- xori
     "001001100100000"  when "001101", -- ori
     "001011100100100"  when "001010", -- slti
+    "001011100100100"  when "001011", -- sltiu (same implementation as slti)
     "001011000100100"  when "001111", -- lui
     "000101100001100"  when "000100", -- beq
     "000110000001100"  when "000101", -- bne

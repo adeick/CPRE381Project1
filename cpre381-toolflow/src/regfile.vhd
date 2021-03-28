@@ -70,7 +70,7 @@ begin
 			i_D		=> x"00000000",
 			o_Q		=> s2(0));
 		
-	ANDGATE: process (s1)
+	ANDGATE: process (s1, i_wC)
 	begin
 		for i in 0 to 31 loop
 			s3(i) <= s1(i) and i_wC;

@@ -31,7 +31,7 @@ end alu;
 architecture mixed of alu is
 
 -- signal s_RTYPE : std_logic_vector(11 downto 0);
-signal adderOutput, barrelOutput : std_logic_vector(31 downto 0);
+signal adderOutput, barrelOutput, s_out : std_logic_vector(31 downto 0);
 signal s_overflowControl,s_addSuboverFlow	 : std_logic;
 -- signal s_RTYPE : std_logic_vector(31 downto 0);
 
@@ -82,7 +82,7 @@ begin
 	     o_data     	=> barrelOutput);
 
     beq_bne_block: beq_bne
-	port map(i_F 		=> o_F,
+	port map(i_F 		=> s_out,
 	     i_equal_type 	=> i_aluOp(0),
 	     o_zero		=> zero);
 
@@ -103,41 +103,42 @@ begin
     begin --TODO Implement all instructions
         if(i_aluOp = "0010") then
             for i in 0 to 31 loop
-                o_F(i) <= i_A(i) AND i_B(i); --AND bits and place in o_F
+                s_out(i) <= i_A(i) AND i_B(i); --AND bits and place in s_out
             end loop;
         elsif(i_aluOp = "0011") then
             for i in 0 to 31 loop
-                o_F(i) <= i_A(i) OR i_B(i); --OR bits and place in o_F
+                s_out(i) <= i_A(i) OR i_B(i); --OR bits and place in s_out
             end loop;
         elsif(i_aluOp = "0100" or i_aluOp = "1011" or i_aluOp = "1100") then --make sure to XOR when doing beq bne
             for i in 0 to 31 loop
-                o_F(i) <= i_A(i) XOR i_B(i); --XOR bits and place in o_F
+                s_out(i) <= i_A(i) XOR i_B(i); --XOR bits and place in s_out
             end loop;
         elsif(i_aluOp = "0101") then
             for i in 0 to 31 loop
-                o_F(i) <= i_A(i) NOR i_B(i); --NOR bits and place in o_F
+                s_out(i) <= i_A(i) NOR i_B(i); --NOR bits and place in s_out
             end loop;
         elsif(i_aluOp = "0111") then --slt Copy 0s into 31 bits, and then copy sign bit 
             for i in 1 to 31 loop
-                o_F(i) <= '0';
+                s_out(i) <= '0';
             end loop;
-            o_F(0) <= adderOutput(31) XOR s_addSuboverFlow;
+            s_out(0) <= adderOutput(31) XOR s_addSuboverFlow;
         elsif(i_aluOp = "0110") then --Copy 0s into lower 16 bits, and then copy into upper 16 bits
             for i in 0 to 15 loop
-                o_F(i) <= '0';
+                s_out(i) <= '0';
             end loop;
             for i in 16 to 31 loop
-                o_F(i) <= i_B(i-16);
+                s_out(i) <= i_B(i-16);
             end loop;
 	elsif(i_aluOp = "1001" or i_aluOp = "1000" or i_aluOp = "1010") then -- srl, sra, or sll
-	    o_F    <= barrelOutput;
+	    s_out    <= barrelOutput;
         elsif(i_aluOp = "0000" or i_aluOp = "0001" or i_aluOp = "1110" or i_aluOp = "1111" ) then -- addu, subu, add, sub
-	    o_F <= adderOutput;
+	    s_out <= adderOutput;
             --for i in 0 to 31 loop
-               -- o_F(i) <= adderOutput(i); --Place bits from adder into o_F
+               -- s_out(i) <= adderOutput(i); --Place bits from adder into s_out
             --end loop;
         else
-                o_F <= x"00000000"; --In case aluOp is not recognized
+                s_out <= x"00000000"; --In case aluOp is not recognized
         end if;
     end process;
+    o_F <= s_out;
 end mixed;

@@ -1,10 +1,11 @@
   #bubblesort tests for proc
   #$a0 = a[]
   #$a1 = n
-
-  addi    $t8, $a0, 0     #ptr:     original pointer to a[]
-  addi    $t7, $zero, 0   #bool:    swapped
-  addi    $t6, $zero, 0   #int:     i
+bubble:
+  addi  $t8, $a0, 0     #ptr:     original pointer to a[]
+  addi  $t7, $zero, 0   #bool:    swapped
+  addi  $t6, $zero, 0   #int:     i
+  j	whileloop
 
 whileloop:
   slt   $t9, $t6, $a1

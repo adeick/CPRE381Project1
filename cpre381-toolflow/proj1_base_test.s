@@ -9,9 +9,8 @@ main:
 	and	$t2, $t0, 0x20		#should be 0x20
 	andi	$t2, $t2, 0x0		#should be 0x0
 	lui	$t3, 0x1001		#load 0x1001 into upper 16 bits; should be 0x10010000
-	addi	$t0, $zero, 0
-	sw	$t3, 0($t0)		#store 0x10010000 into $t0
-	lw	$t4, 0($t0)		#get 0x10010000 from $t0
+	sw	$t3, 0($sp)		#store 0x10010000 into $t0
+	lw	$t4, 0($sp)		#get 0x10010000 from $t0
 	nor	$t5, $t4, $t4		#should be 0x01101111
 	xor	$t5, $t5, $t4		#should be 0x11111111
 	xori	$t5, $t5, 0x10010000	#should be 0x01101111

@@ -45,14 +45,14 @@ jmplnktst:
 	jr	$ra			#return to brnchtst
 	
 postbrnch:
-	repl.qb	$t0, 0x01		#should be 0x01010101
-	addi	$t1, $zero, 0x01010101
-	bne	$t0, $t1, replqbfail
+#	repl.qb	$t0, 0x01		#should be 0x01010101
+#	addi	$t1, $zero, 0x01010101
+#	bne	$t0, $t1, replqbfail
 	j	replqbsucc
 	
-replqbfail:
-	addi	$t9, $zero, 0
-	j 	done
+#replqbfail:
+#	addi	$t9, $zero, 0
+#	j 	done
 	
 replqbsucc:
 	addi	$t9, $zero, 1

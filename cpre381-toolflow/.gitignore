@@ -1,6 +1,7 @@
 Mars_Modifications
 
 temp/*
+!temp/timing.txt
 
 internal/ModelSimContainer/*
 !internal/ModelSimContainer/.gitkeep

@@ -3,7 +3,7 @@ main:
 	addi	$a1, $zero, 0x1
 	addi	$a2, $zero, 0x2
 	addi	$a3, $zero, 0x3
-	j	stackframetst
+	jal	stackframetst
 	addi	$s0, $v0, 0
 	j	finish
 
@@ -15,11 +15,14 @@ stackframetst:
 	sw	$a2, 12($sp)
 	sw	$a3, 16($sp)
 	addi	$v0, $zero, 0
-	jal	stcktstloop
-	addi	$v0, $v0, 0
+	j	stcktstloop
+	
+preloop:
+	addi	$v0, $v0, 1
 	lw	$t3, 16($sp)
-	slti	$t4, $t3, 0xFF00
+	slti	$t4, $t3, 0xF00
 	bne	$t4, 1, tstdone
+	j	stcktstloop
 	
 stcktstloop:
 	lw	$t0, 4($sp)
@@ -35,7 +38,7 @@ stcktstloop:
 	sw	$t1, 8($sp)
 	sw	$t2, 12($sp)
 	sw	$t3, 16($sp)
-	jr	$ra
+	j	preloop
 	
 tstdone:
 	lw	$ra, 0($sp)
@@ -43,4 +46,5 @@ tstdone:
 	jr	$ra
 	
 finish:
-	
+	addi	$v0, $zero, 10
+	syscall

@@ -20,10 +20,13 @@ swapif:
 	  sw    $t0, 4($t8)
 	  sw    $t1, 0($a8)
 	  addi  $t7, $zero, 1
-	  jr    whileloop
+	  jr    preloop
 else:
 	  addi  $t7, $zero, 0
-	  j     whileloop
-
+	  j     preloop
+preloop:
+  addi    $t6, $t6, 1         #i++
+  addi    $t8, $t8, 1         #a[]++
+  j       whileloop
 whiledone:
     

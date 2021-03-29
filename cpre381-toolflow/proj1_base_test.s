@@ -18,7 +18,45 @@ main:
 	ori	$t6, $t6, 0x10010000	#should be 0x11111111
 	slt	$t7, $t5, $t6		#should be 1
 	slti	$t7, $t0, 0x10		#should be 0
-	addi	$t7, $zero, 0x1		#setup for sll
-	sll	$t7, $t7, 0x8		#should be 0x100
-	srl	$t7, $t7, 0x4		#should be 0x10
+	addi	$t7, $zero, 0x1
+	sll	$t8, $t7, 0x4		#should be 0x10
+	addi	$t7, $zero, 0xFFFF1234	#setup for srl, sra
+	srl	$t8, $t7, 0x2		#should be 0x3FFFC48D
+	sra	$t9, $t7, 0x2		#should be 0xFFFFC48D
+	addi	$t0, $zero, 0x20	
+	addi	$t1, $zero, 0x40
+	sub	$t2, $t1, $t0		#should be 0x20
+	subu	$t2, $t2, $t0		#should be 0x0
+	addi	$t0, $zero, 0x20
+	addi	$t1, $zero, 0x19
+	slt	$t2, $t0, $t1		#$t2 = 0x20 < 0x19 = 0
+	beq	$t2, $zero, brnchtst	#$t2 = 0 branch
+	
+brnchtst:
+	addi	$t7, $zero, 0x4		#0x4
+	addi	$t8, $t7, 0x10		#0x14
+	jal	jmplnktst
+	slt	$t0, $t6, $t9		#$t0 = 0x18 < 0x18 = 0
+	bne	$t0, 1, postbrnch
+	
+jmplnktst:
+	add	$t9, $t7, $t8		#0x18
+	add	$t6, $t7, $t8		#0x18
+	jr	$ra			#return to brnchtst
+	
+postbrnch:
+	repl.qb	$t0, 0x01		#should be 0x01010101
+	addi	$t1, $zero, 0x01010101
+	bne	$t0, $t1, replqbfail
+	j	replqbsucc
+	
+replqbfail:
+	addi	$t9, $zero, 0
+	j 	done
+	
+replqbsucc:
+	addi	$t9, $zero, 1
+	j	done
+	
+done:
 	

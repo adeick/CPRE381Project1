@@ -69,9 +69,11 @@ architecture structure of MIPS_processor is
   signal s_funcCode : std_logic_vector(5 downto 0);--instruction bits[5-0]
   
   signal s_inputPC: std_logic_vector(31 downto 0); --wire from the jump mux
-  signal s_Ctrl  : std_logic_vector(12 downto 0); --Control Brick Output, each bit is a different switch
+  signal s_Ctrl  : std_logic_vector(14 downto 0); --Control Brick Output, each bit is a different switch
 --Control Signals
 signal s_ALUSrc    : std_logic; 
+signal s_jr    : std_logic; 
+signal s_jal    : std_logic; 
 signal s_ALUOp     : std_logic_vector(3 downto 0); --ALU Code
 signal s_MemtoReg    : std_logic; 
 -- s_MemWrite this is s_DMemWr 
@@ -86,9 +88,10 @@ signal s_jump     : std_logic;
 signal s_PCPlusFour   : std_logic_vector(N-1 downto 0);
 signal s_jumpAddress  : std_logic_vector(N-1 downto 0);
 signal s_branchAddress: std_logic_vector(N-1 downto 0);
+signal s_MemToReg0    : std_logic_vector(31 downto 0);
+signal s_RegDst0      : std_logic_vector(4 downto 0);
 
--- TODO: check if this signal is correct --
-signal s_normalOrBranch : std_logic_vector(31 downto 0);
+signal s_normalOrBranch,s_finalJumpAddress : std_logic_vector(31 downto 0);
   
 --ALU Items
 --Inputs:
@@ -115,7 +118,7 @@ signal s1, s2, s3 : std_logic; --don't care output from adder and ALU
   component control_unit is
     port( i_opcode  	: in std_logic_vector(5 downto 0);
 	        i_funct	  	: in std_logic_vector(5 downto 0);
-	        o_Ctrl_Unt	: out std_logic_vector(12 downto 0));
+	        o_Ctrl_Unt	: out std_logic_vector(14 downto 0));
   end component;
 
   component regfile is 
@@ -168,12 +171,11 @@ end component;
     i_CLK : in std_logic; --=> iClk,
     i_RST : in std_logic; --=> iRST,
     i_D   : in std_logic_vector(31 downto 0); --s_inputPC, 
-    o_Q   : in std_logic_vector(31 downto 0));--=> s_NextInstAddr);
+    o_Q   : out std_logic_vector(31 downto 0));--=> s_NextInstAddr);
+  end component;
 
 begin
-
-
-
+  
   with iInstLd select
     s_IMemAddr <= s_NextInstAddr when '0',
       iInstAddr when others;
@@ -203,7 +205,6 @@ begin
 
   instructionSlice: process(s_Inst) --snip the Instruction data into smaller parts
   begin
-    oALUOut <= s_DMemAddr; --oALU is for synthesis
 
 			s_imm16(15 downto 0) <= s_Inst(15 downto 0); --bits[15-0] into Sign Extender
 			s_funcCode(5 downto 0) <= s_Inst(5 downto 0); --bits[5-0] into ALU Control 
@@ -217,7 +218,8 @@ begin
       s_jumpAddress(1) <= '0'; --Set first two bits to zero
       s_jumpAddress(27 downto 2) <= s_Inst(25 downto 0); --Instruction bits[25-0] into bits[27-2] of jumpAddr
     end process;
-
+    
+    oALUOut <= s_DMemAddr; --oALU is for synthesis
     
   control: control_unit
   port map(i_opcode  	=> s_opCode, --in std_logic_vector(5 downto 0);
@@ -227,17 +229,19 @@ begin
     controlSlice: process(s_Ctrl)
     begin
     --Control Signals
-    s_ALUSrc <= s_Ctrl(0);
-		s_ALUOp(3 downto 0) <= s_Ctrl(4 downto 1);
-    s_MemtoReg <= s_Ctrl(6);
-    s_DMemWr <= s_Ctrl(5); 
-    s_RegWr <= s_Ctrl(7);
-    s_RegDst   <= s_Ctrl(8);
-    s_Branch    <= s_Ctrl(9);
-    s_SignExt  <= s_Ctrl(10);
-    s_jump     <= s_Ctrl(11);
+    s_jr <= s_Ctrl(14);
+    s_jal <= s_Ctrl(13);
+    s_ALUSrc <= s_Ctrl(12);
+    s_ALUOp(3 downto 0) <= s_Ctrl(11 downto 8);
+    s_MemtoReg <= s_Ctrl(7);
+    s_DMemWr <= s_Ctrl(6); 
+    s_RegWr <= s_Ctrl(5);
+    s_RegDst   <= s_Ctrl(4);
+    s_Branch    <= s_Ctrl(3);
+    s_SignExt  <= s_Ctrl(2);
+    s_jump     <= s_Ctrl(1);
 
-    s_Halt <= s_Ctrl(12);
+    s_Halt <= s_Ctrl(0);
     end process;
 
   addFour: addersubtractor
@@ -309,12 +313,33 @@ begin
         i_D1      => s_imm32,
         o_O       => s_immMuxOut);
 
+  jumpReg: mux2t1_N
+  generic map(N => 32) 
+  port map(i_S   => s_jr,
+        i_D0      => s_jumpAddress,
+        i_D1      => s_RegOutReadData1,
+        o_O       => s_finalJumpAddress);
+        
+  jalData: mux2t1_N
+  generic map(N => 32) 
+  port map(i_S   => s_jal,
+        i_D0      => s_DMemAddr, --This is the ALU Output
+        i_D1      => s_PCPlusFour,
+        o_O       => s_MemToReg0);
+        
+  jalAddr: mux2t1_N
+  generic map(N => 5) 
+  port map(i_S   => s_jal,
+        i_D0      => s_RegInReadData2, --rt is taking the place of rd,
+        i_D1      => "11111", -- register 31
+        o_O       => s_RegDst0);
+
   RegDst: mux2t1_N
   generic map(N => 5) -- Generic of type integer for input/output data width. Default value is 32.
   port map(i_S   => s_RegDst,
-        i_D0      => s_RegInReadData2, --rt is taking the place of rd
+        i_D0      => s_RegDst0, --output of jalAddr mux
         i_D1      => s_RegD, --rd
-        o_O       => s_RegWrData);
+        o_O       => s_RegWrAddr);
   Branch: mux2t1_N
   generic map(N => 32) 
   port map(i_S    => (s_Branch AND s_ALUBranch),
@@ -325,12 +350,12 @@ begin
   generic map(N => 32) 
   port map(i_S    => s_jump,
         i_D0      => s_normalOrBranch, 
-        i_D1      => s_jumpAddress,
+        i_D1      => s_finalJumpAddress,
         o_O       => s_inputPC);
   MemtoReg: mux2t1_N
   generic map(N => 32) 
   port map(i_S    => s_MemtoReg,
-        i_D0      => s_DMemAddr, --This is the ALU Output 
+        i_D0      => s_MemToReg0, 
         i_D1      => s_DMemOut,
         o_O       => s_RegWrData);
   

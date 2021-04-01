@@ -157,41 +157,41 @@ begin
     s_immediate <= X"0000000a";
     s_rt <= "01010";
     wait for cCLK_PER;
-    -- add $11, $1, $2 # $11 = $1 + $2
+    -- xor $11, $1, $2 # $11 = $1 xor $2
     s_rs <= "00001";
     s_rt <= "00010";
     s_rd <= "01011";
-    i_aluOp <= "1110";
+    i_aluOp <= "0100";
     ALUSrc <= '0';
     wait for cCLK_PER;
     s_rd <= "00000"; --show add working
     s_rt <= "01011";
     wait for cCLK_PER;
-    -- sub $12, $11, $3 # $12 = $11 - $3
+    -- or $12, $11, $3 # $12 = $11 | $3
     s_rd <= "01100";
     s_rs <= "01011";
     s_rt <= "00011";
-    i_aluOp <= "1111";
+    i_aluOp <= "0011";
     ALUSrc <= '0';
     wait for cCLK_PER;
     s_rd <= "00000"; --show add working
     s_rt <= "01100";
     wait for cCLK_PER;
-    -- add $13, $12, $4 # $13 = $12 + $4
+    -- nor $13, $12, $4 # $13 = $12 nor $4
     s_rd <= "01101";
     s_rs <= "01100";
     s_rt <= "00100";
-    i_aluOp <= "1110";
+    i_aluOp <= "0101";
     ALUSrc <= '0';
     wait for cCLK_PER;
     s_rd <= "00000"; --show add working
     s_rt <= "01101";
     wait for cCLK_PER;
-    -- sub $14, $13, $5 # $14 = $13 - $5
+    -- slt $14, $13, $5 # $14 = $13 - $5
     s_rd <= "01110";
     s_rs <= "01101";
     s_rt <= "00101";
-    i_aluOp <= "1111";
+    i_aluOp <= "0111";
     ALUSrc <= '0';
     wait for cCLK_PER;
     s_rd <= "00000"; --show add working
@@ -266,6 +266,75 @@ begin
     s_rt <= "10101";
     wait for cCLK_PER;
 
+    -- lui $22, 0x8000
+    s_rd <= "10110";
+    s_rs <= "10011";
+    s_rt <= "10100";
+    i_aluOp <= "0110";
+    s_immediate <= X"00008000";
+    ALUSrc <= '1';
+    wait for cCLK_PER;
+    s_rd <= "00000"; --show load working
+    s_rt <= "10110";
+    wait for cCLK_PER;
+
+    -- add $22, $21, $22
+    s_rd <= "10110";
+    s_rs <= "10101";
+    s_rt <= "10110";
+    i_aluOp <= "1110";
+    ALUSrc <= '0';
+    wait for cCLK_PER;
+    s_rd <= "00000"; --show overflow output working
+    s_rt <= "10110";
+    wait for cCLK_PER;
+
+    -- sll $22, 2
+    s_rd <= "10110";
+    s_rs <= "10101";
+    s_rt <= "10110";
+    i_aluOp <= "1001";
+    i_shamt <= "00010";
+    ALUSrc <= '0';
+    wait for cCLK_PER;
+    s_rd <= "00000"; --show overflow output working
+    s_rt <= "10110";
+    wait for cCLK_PER;
+
+    -- sra $22, 2
+    s_rd <= "10110";
+    s_rs <= "10101";
+    s_rt <= "10110";
+    i_aluOp <= "1010";
+    i_shamt <= "00010";
+    ALUSrc <= '0';
+    wait for cCLK_PER;
+    s_rd <= "00000"; --show overflow output working
+    s_rt <= "10110";
+    wait for cCLK_PER;
+
+    -- srl $22, 18
+    s_rd <= "10110";
+    s_rs <= "10101";
+    s_rt <= "10110";
+    i_aluOp <= "1000";
+    i_shamt <= "10010";
+    ALUSrc <= '0';
+    wait for cCLK_PER;
+    s_rd <= "00000"; --show overflow output working
+    s_rt <= "10110";
+    wait for cCLK_PER;
+
+    -- and $22, $22, $21
+    s_rd <= "10110";
+    s_rs <= "10110";
+    s_rt <= "10101";
+    i_aluOp <= "0010";
+    ALUSrc <= '0';
+    wait for cCLK_PER;
+    s_rd <= "00000"; --show add working
+    s_rt <= "10110";
+    wait for cCLK_PER;
 
     wait;
   end process;

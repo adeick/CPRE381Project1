@@ -54,4 +54,4 @@ add wave -noupdate -label zero /tb_newalu_MIPS_lab2/zero
 
 
 # Run for 100 timesteps (default is 1ns per timestep, but this can be modified so be aware).
-run 3200
+run 4600

@@ -27,7 +27,7 @@ end MIPS_register_file;
 -- architecture
 architecture structural of MIPS_register_file is
 
-  component mux32t1_N is
+  component maux32t1_N is
   port(i_S          : in std_logic_vector(4 downto 0);
        i_D          : in std_logic_matrix(31 downto 0);
        o_O          : out std_logic_vector(31 downto 0));
@@ -76,11 +76,11 @@ begin
 		 o_Q   => s_D(i));
   end generate BIT31_DFF;
 
-  x4: mux32t1_N
+  x4: maux32t1_N
 	port map(i_S => i_rs,
 		 i_D => s_D,
 		 o_O => o_rsData);
-  x5: mux32t1_N
+  x5: maux32t1_N
 	port map(i_S => i_rt,
 		 i_D => s_D,
 		 o_O => o_rtData);

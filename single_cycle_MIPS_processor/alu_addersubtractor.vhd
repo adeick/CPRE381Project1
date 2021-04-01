@@ -18,7 +18,7 @@ use IEEE.std_logic_1164.all;
 entity alu_addersubtractor is
   generic(N : integer := 32); -- Generic of type integer for input/output data width. Default value is 32.
   port( nAdd_Sub	: in std_logic;
-	i_OvrflwCtrl	: in std_logic; -- controls overflow
+	--i_OvrflwCtrl	: in std_logic; -- controls overflow
 	i_A 		: in std_logic_vector(N-1 downto 0);
 	i_B		: in std_logic_vector(N-1 downto 0);
 	o_Y		: out std_logic_vector(N-1 downto 0);
@@ -62,7 +62,6 @@ end component;
   
   signal c : std_logic_vector(N downto 0);
   signal s1, s2 : std_logic_vector(N-1 downto 0);
-  signal s_overflow : std_logic;
 
 begin	
   -- Invert the 2nd input and output it in wire s1.
@@ -89,11 +88,6 @@ begin
 	overflow: xorg2
 	port map(i_A => c(N),
 		 i_B => c(N-1),
-		 o_F => s_overflow);
-
-	overflow_control: andg2
-	port map(i_A => s_overflow,
-		 i_B => i_OvrflwCtrl,
 		 o_F => o_Overflow);
 
   

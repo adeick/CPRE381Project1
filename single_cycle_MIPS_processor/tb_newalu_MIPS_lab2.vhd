@@ -21,28 +21,31 @@ use std.textio.all;             -- For basic I/O
 
 --use work.STD_LOGIC_MATRIX.all;
 
-entity tb_MyFirstMIPSDatapath is
+entity tb_newalu_MIPS_lab2 is
   generic(gCLK_HPER   : time := 50 ns);
-end tb_MyFirstMIPSDatapath;
+end tb_newalu_MIPS_lab2;
 
-architecture behavior of tb_MyFirstMIPSDatapath is
+architecture behavior of tb_newalu_MIPS_lab2 is
   
   -- Calculate the clock period as twice the half-period
   constant cCLK_PER  : time := gCLK_HPER * 2;
 
 
-  component MyFirstMIPSDatapath
+  component newalu_MIPS_lab2
   port(i_RST         : in std_logic;
        i_CLK         : in std_logic;
        i_ALUSrc	     : in std_logic;
-       i_nAdd_Sub    : in std_logic;
+       i_shamt       : in std_logic_vector(4 downto 0);
+       i_aluOp       : in std_logic_vector(3 downto 0);
        i_rd          : in std_logic_vector(4 downto 0); -- write port
        i_rs          : in std_logic_vector(4 downto 0); -- read port 1
        i_rt          : in std_logic_vector(4 downto 0); -- read port 2
        i_immediate   : in std_logic_vector(31 downto 0);
        o_ALU	     : out std_logic_vector(31 downto 0);-- ALU output port
        o_rsData      : out std_logic_vector(31 downto 0);-- read port 1 data
-       o_rtData      : out std_logic_vector(31 downto 0));-- read port 2 data
+       o_rtData      : out std_logic_vector(31 downto 0);-- read port 2 data
+       o_overflow    : out std_logic;
+       o_zero        : out std_logic);
   end component;
 
   -- Temporary signals to connect to the dff component.
@@ -53,18 +56,20 @@ architecture behavior of tb_MyFirstMIPSDatapath is
   signal s_ALU     : std_logic_vector(31 downto 0);
   signal s_rsData  : std_logic_vector(31 downto 0);
   signal s_rtData  : std_logic_vector(31 downto 0);
+  signal overflow,zero : std_logic;
 
   signal s_rd      : std_logic_vector(4 downto 0) := (others => '0');
   signal s_rs      : std_logic_vector(4 downto 0) := (others => '0');
   signal s_rt      : std_logic_vector(4 downto 0) := (others => '0');
 
   signal ALUSrc    : std_logic := '0';
-  signal nAdd_Sub  : std_logic := '0';
+  signal i_aluOp   : std_logic_vector(3 downto 0) := (others => '0');
   signal s_immediate : std_logic_vector(31 downto 0) := (others => '0');
+  signal i_shamt   : std_logic_vector(4 downto 0) := (others => '0');
 
 begin
 
-  DUT: MyFirstMIPSDatapath 
+  DUT: newalu_MIPS_lab2 
   port map(i_CLK => s_CLK,
            i_RST => s_RST,
            i_rs => s_rs,
@@ -72,10 +77,13 @@ begin
            i_ALUSrc => ALUSrc,
            o_rsData => s_rsData,
            o_rtData => s_rtData,
-	   i_nAdd_Sub => nAdd_Sub,
+	   i_aluOp => i_aluOp,
 	   o_ALU  => s_ALU,
 	   i_immediate => s_immediate,
-           i_rd   => s_rd);
+           i_rd   => s_rd,
+	   o_overflow => overflow,
+	   o_zero     => zero,
+	   i_shamt    => i_shamt);
 
   -- This process sets the clock value (low for gCLK_HPER, then high
   -- for gCLK_HPER). Absent a "wait" command, processes restart 
@@ -99,7 +107,7 @@ begin
     s_RST <= '0';
     s_rs <= "00000";
     s_rd <= "00001";
-    nAdd_Sub <= '0';
+    i_aluOp <= "1110";
     ALUSrc <= '1';
     s_immediate <= X"00000001";
     s_rt <= "00001";
@@ -153,7 +161,7 @@ begin
     s_rs <= "00001";
     s_rt <= "00010";
     s_rd <= "01011";
-    nAdd_Sub <= '0';
+    i_aluOp <= "1110";
     ALUSrc <= '0';
     wait for cCLK_PER;
     s_rd <= "00000"; --show add working
@@ -163,7 +171,7 @@ begin
     s_rd <= "01100";
     s_rs <= "01011";
     s_rt <= "00011";
-    nAdd_Sub <= '1';
+    i_aluOp <= "1111";
     ALUSrc <= '0';
     wait for cCLK_PER;
     s_rd <= "00000"; --show add working
@@ -173,7 +181,7 @@ begin
     s_rd <= "01101";
     s_rs <= "01100";
     s_rt <= "00100";
-    nAdd_Sub <= '0';
+    i_aluOp <= "1110";
     ALUSrc <= '0';
     wait for cCLK_PER;
     s_rd <= "00000"; --show add working
@@ -183,7 +191,7 @@ begin
     s_rd <= "01110";
     s_rs <= "01101";
     s_rt <= "00101";
-    nAdd_Sub <= '1';
+    i_aluOp <= "1111";
     ALUSrc <= '0';
     wait for cCLK_PER;
     s_rd <= "00000"; --show add working
@@ -193,7 +201,7 @@ begin
     s_rd <= "01111";
     s_rs <= "01110";
     s_rt <= "00110";
-    nAdd_Sub <= '0';
+    i_aluOp <= "1110";
     ALUSrc <= '0';
     wait for cCLK_PER;
     s_rd <= "00000"; --show add working
@@ -203,7 +211,7 @@ begin
     s_rd <= "10000";
     s_rs <= "01111";
     s_rt <= "00111";
-    nAdd_Sub <= '1';
+    i_aluOp <= "1111";
     ALUSrc <= '0';
     wait for cCLK_PER;
     s_rd <= "00000"; --show add working
@@ -213,7 +221,7 @@ begin
     s_rd <= "10001";
     s_rs <= "10000";
     s_rt <= "01000";
-    nAdd_Sub <= '0';
+    i_aluOp <= "1110";
     ALUSrc <= '0';
     wait for cCLK_PER;
     s_rd <= "00000"; --show add working
@@ -223,7 +231,7 @@ begin
     s_rd <= "10010";
     s_rs <= "10001";
     s_rt <= "01001";
-    nAdd_Sub <= '1';
+    i_aluOp <= "1111";
     ALUSrc <= '0';
     wait for cCLK_PER;
     s_rd <= "00000"; --show add working
@@ -233,7 +241,7 @@ begin
     s_rd <= "10011";
     s_rs <= "10010";
     s_rt <= "01010";
-    nAdd_Sub <= '0';
+    i_aluOp <= "1110";
     ALUSrc <= '0';
     wait for cCLK_PER;
     s_rd <= "00000"; --show add working
@@ -243,7 +251,7 @@ begin
     s_rd <= "10100";
     s_rs <= "00000";
     s_immediate <= X"FFFFFFDD";
-    nAdd_Sub <= '0';
+    i_aluOp <= "1110";
     ALUSrc <= '1';
     s_rt <= "10100";
     wait for cCLK_PER;
@@ -251,7 +259,7 @@ begin
     s_rd <= "10101";
     s_rs <= "10011";
     s_rt <= "10100";
-    nAdd_Sub <= '0';
+    i_aluOp <= "1110";
     ALUSrc <= '0';
     wait for cCLK_PER;
     s_rd <= "00000"; --show add working

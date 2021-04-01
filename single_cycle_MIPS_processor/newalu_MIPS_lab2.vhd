@@ -14,22 +14,25 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 -- entity
 
-entity MyFirstMIPSDatapath is
+entity newalu_MIPS_lab2 is
   port(i_RST         : in std_logic;
        i_CLK         : in std_logic;
        i_ALUSrc	     : in std_logic;
-       i_nAdd_Sub    : in std_logic;
+       i_shamt       : in std_logic_vector(4 downto 0);
+       i_aluOp       : in std_logic_vector(3 downto 0);
        i_rd          : in std_logic_vector(4 downto 0); -- write port
        i_rs          : in std_logic_vector(4 downto 0); -- read port 1
        i_rt          : in std_logic_vector(4 downto 0); -- read port 2
        i_immediate   : in std_logic_vector(31 downto 0);
        o_ALU	     : out std_logic_vector(31 downto 0);-- ALU output port
        o_rsData      : out std_logic_vector(31 downto 0);-- read port 1 data
-       o_rtData      : out std_logic_vector(31 downto 0));-- read port 2 data
-end MyFirstMIPSDatapath;
+       o_rtData      : out std_logic_vector(31 downto 0);-- read port 2 data
+       o_overflow    : out std_logic;
+       o_zero        : out std_logic);
+end newalu_MIPS_lab2;
 
 -- architecture
-architecture structural of MyFirstMIPSDatapath is
+architecture structural of newalu_MIPS_lab2 is
 
   component mux2t1_N is
   generic(N : integer := 16); -- Generic of type integer for input/output data width. Default value is 32.
@@ -50,13 +53,16 @@ architecture structural of MyFirstMIPSDatapath is
        o_rtData      : out std_logic_vector(31 downto 0));-- read port 2 data
   end component;
 
-  component AddSub_N is
+  component alu is
   generic(N : integer := 32); -- Generic of type integer for input/output data width. Default value is 32.
-  port(i_A          : in std_logic_vector(N-1 downto 0);
-       i_B	    : in std_logic_vector(N-1 downto 0);
-       i_nAdd_Sub   : in std_logic;
-       o_S	    : out std_logic_vector(N-1 downto 0);
-       o_C          : out std_logic);
+  	port(i_A    : in std_logic_vector(31 downto 0);
+         i_B        : in std_logic_vector(31 downto 0);
+         i_aluOp    : in std_logic_vector(3 downto 0);
+	 i_shamt    : in std_logic_vector(4 downto 0);
+         o_F        : out std_logic_vector(31 downto 0);
+         --cOut       : out std_logic;
+         overFlow   : out std_logic;
+         zero       : out std_logic);
   end component;
 
 
@@ -84,11 +90,13 @@ begin
 		 i_D1 => i_immediate,
 		 o_O => s_B);
 
-  x3: AddSub_N
-  generic map(N => 32)
+  x3: alu
   port map(i_A => o_rsData,
        i_B => s_B,
-       i_nAdd_Sub => i_nAdd_Sub,
-       o_S	  => o_ALU);
+       i_aluOp => i_aluOp,
+       i_shamt	  => i_shamt,
+	o_F	=> o_ALU,
+	overflow=> o_overflow,
+	zero	=> o_zero);
   
 end structural;

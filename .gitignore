@@ -1,4 +1,5 @@
 # Ignore BAK
 *.bak
+.DS_Store
 Ignore everything in a work folder
 */work/*

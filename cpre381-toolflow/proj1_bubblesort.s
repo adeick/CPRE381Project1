@@ -1,6 +1,19 @@
   #bubblesort tests for proc
   #$a0 = a[]
   #$a1 = n
+  
+main:
+  addi	$a0, $zero, 0x40
+  addi	$t1, $zero, 1
+  sw	$t1, 0($a0)
+  addi	$t1, $zero, 3
+  sw	$t1, 4($a0)
+  addi	$t1, $zero, 2
+  sw	$t1, 8($a0)
+  addi	$t1, $zero, 4
+  sw	$t1, 12($a0)
+  addi	$t1, $zero, 5
+  sw	$t1, 16($a0)
 bubble:
   addi  $t8, $a0, 0     #ptr:     original pointer to a[]
   addi  $t7, $zero, 0   #bool:    swapped

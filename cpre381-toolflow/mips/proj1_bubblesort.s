@@ -1,7 +1,14 @@
   #bubblesort tests for proc
   #$a0 = a[]
   #$a1 = n
-  
+.data
+arr:
+        .word   5 #0 
+        .word   4 #1
+        .word   3 #2
+        .word   2 #3
+        .word	1 #4
+.text
 main:
   sub	$sp, $sp, 32
   addi	$a0, $sp, 8

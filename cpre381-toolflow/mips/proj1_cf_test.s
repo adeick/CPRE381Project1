@@ -1,3 +1,6 @@
+.data
+
+.text
 main:
 	addi	$a0, $zero, 0x0
 	addi	$a1, $zero, 0x1

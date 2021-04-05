@@ -1,5 +1,7 @@
 #assembly to test basic instructions
+.data
 
+.text
 main:
 	addi	$t0, $zero, 0x5		#should be 0x5
 	addi	$t1, $zero, 0x10
@@ -46,18 +48,5 @@ jmplnktst:
 	jr	$ra			#return to brnchtst
 	
 postbrnch:
-#	repl.qb	$t0, 0x01		#should be 0x01010101
-#	addi	$t1, $zero, 0x01010101
-#	bne	$t0, $t1, replqbfail
-	j	replqbsucc
-	
-#replqbfail:
-#	addi	$t9, $zero, 0
-#	j 	done
-	
-replqbsucc:
 	addi	$t9, $zero, 1
-	j	done
-	
-done:
 	

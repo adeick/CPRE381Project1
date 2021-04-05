@@ -49,4 +49,5 @@ jmplnktst:
 	
 postbrnch:
 	addi	$t9, $zero, 1
+	halt
 	

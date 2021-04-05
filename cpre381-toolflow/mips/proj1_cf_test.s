@@ -44,3 +44,4 @@ tstdone:
 	jr	$ra
 	
 finish:
+halt

@@ -3,6 +3,7 @@
 
 .text
 main:
+	li $sp, 0x10011000
 	addi	$t0, $zero, 0x5		#should be 0x5
 	addi	$t1, $zero, 0x10
 	add	$t0, $t0, $t1		#should be 0x15
@@ -31,6 +32,7 @@ main:
 	subu	$t2, $t2, $t0		#should be 0x0
 	addi	$t0, $zero, 0x20
 	addi	$t1, $zero, 0x19
+	addi	$t9, $t9, 0xFFFFFFFF
 	slt	$t2, $t0, $t1		#$t2 = 0x20 < 0x19 = 0
 	beq	$t2, $zero, brnchtst	#$t2 = 0 branch
 	

@@ -10,6 +10,7 @@ arr:
         .word	1 #4
 .text
 main:
+  li $sp, 0x10011000
   sub	$sp, $sp, 32
   addi	$a0, $sp, 8
   addi	$a1, $zero, 20

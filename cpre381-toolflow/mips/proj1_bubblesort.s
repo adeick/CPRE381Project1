@@ -56,4 +56,4 @@ whiledone:
   lw	$t2, 8($a0)
   lw	$t3, 12($a0)
   lw	$t4, 16($a0)
-  halt
+  #halt

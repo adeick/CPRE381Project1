@@ -1,6 +1,11 @@
 .data
 
 .text
+	lui $sp, 0x7FFF
+	ori $sp, $sp, 0xEFFC
+	lui $gp, 0x1000
+	ori $gp, $gp, 0x8000
+
 main:
 	li $sp, 0x10011000
 	addi	$a0, $zero, 0x0

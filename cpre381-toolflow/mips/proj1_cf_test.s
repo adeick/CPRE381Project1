@@ -50,4 +50,4 @@ tstdone:
 	jr	$ra
 	
 finish:
-	#halt
+	halt
